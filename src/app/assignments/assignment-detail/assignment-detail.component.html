@@ -1,0 +1,24 @@
+<ng-container *ngIf="assignment">
+  <mat-card class="assignment-card">
+    <mat-card-header>
+      <mat-card-title>{{ assignment.name }}</mat-card-title>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <p>📅 Due Date: {{ assignment.dueDate | date:'yyyy/MM/dd' }}</p>
+
+      <!-- Toggle Submission Status -->
+      <mat-slide-toggle color="primary" [checked]="assignment.submitted" (change)="onToggleSubmission()">
+        <span [ngClass]="assignment.submitted ? 'submitted-label' : 'not-submitted-label'">
+          {{ assignment.submitted ? '✅ Submitted' : '❌ Not Submitted' }}
+        </span>
+      </mat-slide-toggle>
+    </mat-card-content>
+  
+    <mat-card-actions>
+      <button mat-raised-button color="warn" (click)="onDelete()">
+        🗑 Delete
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</ng-container>

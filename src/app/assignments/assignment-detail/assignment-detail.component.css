@@ -1,0 +1,33 @@
+.assignment-card {
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  mat-card-title {
+    font-size: 20px;
+    font-weight: bold;
+  }
+  
+  mat-card-content {
+    font-size: 16px;
+  }
+
+  .mat-dialog-container {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+  }
+  
+  mat-dialog-actions {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  button {
+    font-weight: bold;
+  }
+  
+  

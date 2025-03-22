@@ -1,0 +1,57 @@
+.container {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+}
+
+h2 {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 15px;
+}
+
+button {
+  display: block;
+  margin: 10px auto;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #f5f5f5;
+}
+
+mat-checkbox {
+  display: flex;
+  align-items: center;
+}
+
+.submitted-label {
+  color: green;
+  font-weight: bold;
+}
+
+.not-submitted-label {
+  color: red;
+  font-weight: bold;
+}
+
+mat-checkbox span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
