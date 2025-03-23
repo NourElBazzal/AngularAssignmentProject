@@ -1,32 +1,41 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Assignment } from '../assignment.model'; 
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
+import {MatFormFieldModule} from '@angular/material/form-field';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { AssignmentsService } from '../../shared/assignments.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from './confirm-dialog.component';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from '../../shared/auth.service';
+import { SubmissionConfirmDialogComponent } from './submission-confirm-dialog.component';
+import { FormsModule } from '@angular/forms';
+import { ConfirmGradeDialogComponent } from './confirm-grade-dialog.component';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-assignment-detail',
   standalone: true,
   imports: [CommonModule, MatCardModule, MatCheckboxModule, 
-    MatButtonModule, MatSlideToggleModule, MatDialogModule], 
+    MatButtonModule, MatFormFieldModule, MatSlideToggleModule,
+     MatDialogModule, FormsModule, MatInputModule], 
   templateUrl: './assignment-detail.component.html',
   styleUrls: ['./assignment-detail.component.css']
 })
 
 export class AssignmentDetailComponent {
   assignment?: Assignment;
+  selectedFile: File | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private assignmentsService: AssignmentsService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    public authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -40,6 +49,32 @@ export class AssignmentDetailComponent {
       } else {
         console.log("No assignment found with this ID! Redirecting...");
         this.router.navigate(['/']); 
+      }
+    });
+  }
+
+  onFileSelected(event: any) {
+    this.selectedFile = event.target.files[0];
+  }
+
+  onSubmitAssignment() {
+    if (!this.assignment || !this.selectedFile) return; 
+  
+    const dialogRef = this.dialog.open(SubmissionConfirmDialogComponent, {
+      width: '350px',
+      data: { assignmentName: this.assignment.name }
+    });
+  
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed && this.assignment && this.selectedFile) { 
+        const fileUrl = URL.createObjectURL(this.selectedFile as Blob); 
+        this.assignmentsService.submitAssignment(this.assignment.id, fileUrl).subscribe(() => {
+          if (this.assignment) {
+            this.assignment.submitted = true;
+            this.assignment.fileUrl = fileUrl;
+          }
+          console.log('Assignment submitted successfully.');
+        });
       }
     });
   }
@@ -71,10 +106,43 @@ export class AssignmentDetailComponent {
   }
 
   onClickEdit() {
+    if (!this.assignment) return; 
+
     this.router.navigate(['/assignment', this.assignment?.id, 'edit'], {
       queryParams: { name: this.assignment?.name },
       fragment: 'editing'
     });
   }
-  
+
+  canSubmit(): boolean {
+    return this.authService.isStudent() && !this.assignment?.submitted;
+  }
+
+  onSubmitGrade() {
+    if (!this.assignment) return; 
+
+    const dialogRef = this.dialog.open(ConfirmGradeDialogComponent, {
+      width: '400px',
+      data: { 
+        grade: this.assignment.grade ?? 0,
+        feedback: this.assignment.feedback ?? ''
+      },
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && this.assignment) {
+        console.log("Dialog result:", result); // Debugging
+
+        this.assignment.grade = result.grade;  
+        this.assignment.feedback = result.feedback;
+
+        this.assignmentsService.updateAssignment(this.assignment).subscribe(() => {
+          console.log("Grade & feedback updated successfully:", this.assignment);
+        });
+      }
+    });
+  }
+
+
+
 }

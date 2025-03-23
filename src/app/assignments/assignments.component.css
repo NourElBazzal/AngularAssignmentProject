@@ -18,6 +18,19 @@ button {
   border-radius: 5px;
 }
 
+.filters {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 70px; /* Push it below the toolbar */
+  padding: 10px;
+}
+
+.filters mat-form-field {
+  min-width: 220px;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -40,14 +53,15 @@ mat-checkbox {
 }
 
 .submitted-label {
-  color: green;
+  color: #2E7D32;
   font-weight: bold;
 }
 
 .not-submitted-label {
-  color: red;
+  color: #C62828;
   font-weight: bold;
 }
+
 
 mat-checkbox span {
   display: flex;

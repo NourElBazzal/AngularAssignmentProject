@@ -7,21 +7,54 @@
     <mat-card-content>
       <p>📅 Due Date: {{ assignment.dueDate | date:'yyyy/MM/dd' }}</p>
 
-      <!-- Toggle Submission Status -->
-      <mat-slide-toggle color="primary" [checked]="assignment.submitted" (change)="onToggleSubmission()">
-        <span [ngClass]="assignment.submitted ? 'submitted-label' : 'not-submitted-label'">
-          {{ assignment.submitted ? '✅ Submitted' : '❌ Not Submitted' }}
-        </span>
-      </mat-slide-toggle>
+      <p [ngClass]="assignment.submitted ? 'submission-status submitted' : 'submission-status not-submitted'">
+        {{ assignment.submitted ? '✅ Submitted' : '❌ Not Submitted' }}
+      </p>
+
+      <!-- File Upload Section for Students -->
+      @if (canSubmit()) {
+        <div class="file-upload-container">
+          <input type="file" id="fileInput" class="file-input" (change)="onFileSelected($event)">
+          <label for="fileInput" class="file-label">📎 Choose a File</label>
+
+          <button class="submit-button" (click)="onSubmitAssignment()">📤 Submit Assignment</button>
+        </div>
+      }
+
+      <!-- Display Submitted File -->
+      @if (assignment.fileUrl) {
+        <a [href]="assignment.fileUrl" target="_blank" class="view-submission">📄 View Submission</a>
+      }
+
+      <!-- Teacher: Grade and Feedback Input -->
+      <ng-container *ngIf="authService.isAdmin() && assignment.submitted">
+        <div class="grade-feedback-container">
+          <mat-form-field appearance="fill" class="grade-input">
+            <mat-label>💯 Grade (out of 20)</mat-label>
+            <input matInput type="number" [(ngModel)]="assignment.grade" min="0" max="20">
+          </mat-form-field>
+        
+          <mat-form-field appearance="fill" class="feedback-input">
+            <mat-label>💬 Feedback</mat-label>
+            <textarea matInput rows="3" [(ngModel)]="assignment.feedback" placeholder="Write your feedback here..."></textarea>
+          </mat-form-field>
+
+          <button mat-raised-button color="primary" (click)="onSubmitGrade()">💯 Submit Grade</button>
+        </div>
+      </ng-container>
+
+      <!-- Student View: Show Grade & Feedback -->
+      <ng-container *ngIf="authService.isStudent() && assignment.submitted">
+        <p><strong>📊 Grade:</strong> {{ assignment.grade ?? 'Not graded yet' }}/20</p>
+        <p><strong>💬 Feedback:</strong> {{ assignment.feedback ?? 'No feedback yet' }}</p>
+      </ng-container>
     </mat-card-content>
 
     <mat-card-actions>
-      <button mat-raised-button color="accent" (click)="onClickEdit()">
-        Edit
-      </button>
-      <button mat-raised-button color="warn" (click)="onDelete()">
-        🗑 Delete
-      </button>
+      @if (authService.isAdmin()) {
+        <button mat-raised-button color="accent" (click)="onClickEdit()">Edit</button>
+        <button mat-raised-button color="warn" (click)="onDelete()">🗑 Delete</button>
+      }
     </mat-card-actions>
   </mat-card>
 </ng-container>

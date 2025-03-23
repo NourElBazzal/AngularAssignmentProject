@@ -1,39 +1,54 @@
-<!--
-<mat-toolbar color="primary">
-  <span>📚 My Assignments</span>
-</mat-toolbar>
--->
-<div class="container">
-    <h2>📚 My Assignments List</h2><br>
-    <table mat-table [dataSource]="assignments" class="mat-elevation-z8">
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef> Assignment Name </th>
-        <td mat-cell *matCellDef="let assignment">
-          <a mat-button color="primary" [routerLink]="['/assignment', assignment.id]">
-            {{ assignment.name }}
-          </a>          
-        </td>
-      </ng-container>
+<div class="filters">
+  <mat-form-field appearance="outline">
+    <mat-label>🔍 Search</mat-label>
+    <input matInput (input)="applyFilters()" [(ngModel)]="searchText" placeholder="Search assignment...">
+  </mat-form-field>
 
-      <!-- Due Date Column -->
-      <ng-container matColumnDef="dueDate">
-        <th mat-header-cell *matHeaderCellDef> Due Date </th>
-        <td mat-cell *matCellDef="let assignment">
-          {{ assignment.dueDate | date:'yyyy/MM/dd' }}
-        </td>
-      </ng-container>
+  <mat-form-field appearance="outline">
+    <mat-label>📌 Filter by Status</mat-label>
+    <mat-select [(value)]="filterStatus" (selectionChange)="applyFilters()">
+      <mat-option value="">All</mat-option>
+      <mat-option value="submitted">Submitted</mat-option>
+      <mat-option value="pending">Pending</mat-option>
+    </mat-select>
+  </mat-form-field>
 
-      <!-- Status Column with Checkbox -->
-      <ng-container matColumnDef="submitted">
-        <th mat-header-cell *matHeaderCellDef> Status </th>
-        <td mat-cell *matCellDef="let assignment">
-          <mat-checkbox [(ngModel)]="assignment.submitted">
-            {{ assignment.submitted ? 'Submitted' : 'Not Submitted' }}
-          </mat-checkbox>
-        </td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="['name', 'dueDate', 'submitted']"></tr>
-      <tr mat-row *matRowDef="let row; columns: ['name', 'dueDate', 'submitted'];"></tr>
-    </table>
+  <mat-form-field appearance="outline">
+    <mat-label>📅 Sort by Due Date</mat-label>
+    <mat-select [(value)]="sortOrder" (selectionChange)="applyFilters()">
+      <mat-option value="asc">Earliest First</mat-option>
+      <mat-option value="desc">Latest First</mat-option>
+    </mat-select>
+  </mat-form-field>
 </div>
+
+<!-- Assignments Table -->
+<table mat-table [dataSource]="filteredAssignments" class="mat-elevation-z8">
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef> Assignment Name </th>
+    <td mat-cell *matCellDef="let assignment">
+      <a mat-button color="primary" [routerLink]="['/assignment', assignment.id]">
+        {{ assignment.name }}
+      </a>          
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="dueDate">
+    <th mat-header-cell *matHeaderCellDef> Due Date </th>
+    <td mat-cell *matCellDef="let assignment">
+      {{ assignment.dueDate | date:'yyyy/MM/dd' }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="status">
+    <th mat-header-cell *matHeaderCellDef> Status </th>
+    <td mat-cell *matCellDef="let assignment">
+      <span [ngClass]="assignment.submitted ? 'submitted-label' : 'not-submitted-label'">
+        {{ assignment.submitted ? '✅ Submitted' : '❌ Pending' }}
+      </span>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="['name', 'dueDate', 'status']"></tr>
+  <tr mat-row *matRowDef="let row; columns: ['name', 'dueDate', 'status'];"></tr>
+</table>

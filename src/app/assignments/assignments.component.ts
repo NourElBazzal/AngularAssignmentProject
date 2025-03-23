@@ -17,13 +17,14 @@ import { AssignmentDetailComponent } from './assignment-detail/assignment-detail
 import {AssignmentsService} from '../shared/assignments.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-assignments',
   imports: [CommonModule, SubmittedDirective, NotSubmittedDirective, FormsModule, 
     MatInputModule, MatButtonModule, MatDatepickerModule, MatNativeDateModule, 
     MatFormFieldModule, MatCheckbox, MatToolbarModule, MatListModule, MatTableModule, 
-    AssignmentDetailComponent, RouterModule],
+    AssignmentDetailComponent, RouterModule, MatSelectModule],
   templateUrl: './assignments.component.html',
   styleUrl: './assignments.component.css'
 })
@@ -37,6 +38,11 @@ export class AssignmentsComponent implements OnInit{
 
   assignments: Assignment[] = [];
   assignmentClicked: Assignment | null = null;
+
+  searchText: string = '';
+  filterStatus: string = '';
+  sortOrder: string = 'asc';
+  filteredAssignments: Assignment[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -55,8 +61,37 @@ export class AssignmentsComponent implements OnInit{
   getAssignments(): void {
     this.assignmentsService.getAssignments().subscribe((data) => {
       this.assignments = [...data];
+      this.applyFilters();
     });
   }
+  
+  applyFilters() {
+    let filtered = this.assignments;
+  
+    // 1- Search Filter
+    if (this.searchText) {
+      filtered = filtered.filter(a =>
+        a.name.toLowerCase().includes(this.searchText.toLowerCase())
+      );
+    }
+  
+    // 2- Status Filter
+    if (this.filterStatus === 'submitted') {
+      filtered = filtered.filter(a => a.submitted);
+    } else if (this.filterStatus === 'pending') {
+      filtered = filtered.filter(a => !a.submitted);
+    }
+  
+    // 3- Sort by Due Date
+    filtered.sort((a, b) => {
+      const dateA = new Date(a.dueDate).getTime();
+      const dateB = new Date(b.dueDate).getTime();
+      return this.sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+    });
+  
+    this.filteredAssignments = filtered;
+  }
+  
 
   onAddAssignmentBtnClick(): void {
     this.assignmentClicked = null;  // Hide selected assignment
