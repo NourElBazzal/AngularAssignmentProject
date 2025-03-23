@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Assignment } from '../assignment.model'; 
 import { MatCardModule } from '@angular/material/card';
@@ -8,6 +8,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { AssignmentsService } from '../../shared/assignments.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from './confirm-dialog.component';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-assignment-detail',
@@ -15,32 +16,47 @@ import { ConfirmDialogComponent } from './confirm-dialog.component';
   imports: [CommonModule, MatCardModule, MatCheckboxModule, 
     MatButtonModule, MatSlideToggleModule, MatDialogModule], 
   templateUrl: './assignment-detail.component.html',
-  styleUrl: './assignment-detail.component.css'
+  styleUrls: ['./assignment-detail.component.css']
 })
+
 export class AssignmentDetailComponent {
-  @Input() assignment!: Assignment;
-  @Output() assignmentDeleted = new EventEmitter<number>();
+  assignment?: Assignment;
 
-  constructor(private assignmentsService: AssignmentsService, private dialog: MatDialog) {} // ✅ Inject MatDialog correctly
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private assignmentsService: AssignmentsService,
+    private dialog: MatDialog
+  ) {}
 
-  onToggleRendu() {
-    if (this.assignment) {
-      this.assignment.submitted = !this.assignment.submitted; // Toggle status
-      this.assignmentsService.updateAssignment(this.assignment).subscribe((message) => {
-        console.log(message); // Debugging
-      });
-    }
+  ngOnInit() {
+    const id = +this.route.snapshot.params['id']; 
+    console.log("Fetching assignment with ID:", id); 
+  
+    this.assignmentsService.getAssignment(id).subscribe((assignment) => {
+      if (assignment) {
+        this.assignment = assignment;
+        console.log("Assignment found:", this.assignment); 
+      } else {
+        console.log("No assignment found with this ID! Redirecting...");
+        this.router.navigate(['/']); 
+      }
+    });
   }
-
+  
   onDelete() {
+    if (!this.assignment) return;
+  
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
-      data: { assignmentName: this.assignment.name }
+      data: { assignmentName: this.assignment.name },
     });
-
-    dialogRef.afterClosed().subscribe(result => {
+  
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.assignmentDeleted.emit(this.assignment.id);
+        this.assignmentsService.deleteAssignment(this.assignment?.id!).subscribe(() => {
+          this.router.navigate(['/']); // Navigate back after deletion
+        });
       }
     });
   }
@@ -49,8 +65,16 @@ export class AssignmentDetailComponent {
     if (this.assignment) {
       this.assignment.submitted = !this.assignment.submitted;
       this.assignmentsService.updateAssignment(this.assignment).subscribe((message) => {
-        console.log(message); // Debugging log
+        console.log(message);
       });
     }
   }
+
+  onClickEdit() {
+    this.router.navigate(['/assignment', this.assignment?.id, 'edit'], {
+      queryParams: { name: this.assignment?.name },
+      fragment: 'editing'
+    });
+  }
+  
 }

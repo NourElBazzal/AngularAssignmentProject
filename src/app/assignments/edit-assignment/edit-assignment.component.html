@@ -1,0 +1,20 @@
+<div class="container">
+    <h2>Edit Assignment</h2>
+    <form  #assignmentForm="ngForm" (ngSubmit)="onSubmit()" class="form">
+    <mat-form-field>
+        <mat-label>Assignment Name</mat-label>
+        <input matInput [(ngModel)]="assignment.name" name="name"/>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Due Date</mat-label>
+        <input matInput [matDatepicker]="picker" [(ngModel)]="assignment.dueDate" name="dueDate"/>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-checkbox [(ngModel)]="assignment.submitted" name="submitted">Submitted</mat-checkbox>
+
+    <button mat-raised-button color="primary" type="submit">Save</button>
+    </form>
+</div>

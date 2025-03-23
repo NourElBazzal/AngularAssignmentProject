@@ -4,17 +4,14 @@
 </mat-toolbar>
 -->
 <div class="container">
-
-  <!-- Show assignment list only when form is hidden -->
-  @if (!formVisible) {
     <h2>📚 My Assignments List</h2><br>
     <table mat-table [dataSource]="assignments" class="mat-elevation-z8">
       <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef> Assignment Name </th>
         <td mat-cell *matCellDef="let assignment">
-          <button mat-button color="primary" (click)="onAssignmentClick(assignment)">
+          <a mat-button color="primary" [routerLink]="['/assignment', assignment.id]">
             {{ assignment.name }}
-          </button>
+          </a>          
         </td>
       </ng-container>
 
@@ -30,13 +27,8 @@
       <ng-container matColumnDef="submitted">
         <th mat-header-cell *matHeaderCellDef> Status </th>
         <td mat-cell *matCellDef="let assignment">
-          <mat-checkbox 
-            color="accent"
-            [checked]="assignment.submitted" 
-            (change)="toggleSubmission(assignment)">
-            <span [ngClass]="assignment.submitted ? 'submitted-label' : 'not-submitted-label'">
-              {{ assignment.submitted ? 'Submitted' : 'Not Submitted' }}
-            </span>
+          <mat-checkbox [(ngModel)]="assignment.submitted">
+            {{ assignment.submitted ? 'Submitted' : 'Not Submitted' }}
           </mat-checkbox>
         </td>
       </ng-container>
@@ -44,20 +36,4 @@
       <tr mat-header-row *matHeaderRowDef="['name', 'dueDate', 'submitted']"></tr>
       <tr mat-row *matRowDef="let row; columns: ['name', 'dueDate', 'submitted'];"></tr>
     </table>
-  }
-
-    <!-- Show Assignment Details Only If Selected -->
-    @if (assignmentClicked) {
-      <app-assignment-detail
-        [assignment]="assignmentClicked"
-        (assignmentDeleted)="onAssignmentDeleted($event)">
-      </app-assignment-detail>
-    }
-  
-  <!-- Button to show the add-assignment form -->
-  <button mat-flat-button color="accent" (click)="onAddAssignmentBtnClick()">➕ Add Assignment</button>
-
-  @if (formVisible) {
-    <app-add-assignment (assignmentAdded)="onAssignmentAdded($event)"></app-add-assignment>
-  }
 </div>

@@ -1,5 +1,5 @@
 export class Assignment{
-    id!:number;  // <-- Unique identifier
+    id!:number;  
     name!:string;
     dueDate!:Date;
     submitted!:boolean;
