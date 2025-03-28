@@ -1,24 +1,36 @@
 .assignment-card {
   max-width: 600px;
-  margin: auto;
-  padding: 20px;
+  margin: 0 auto; 
+  padding: 25px;
   border-radius: 12px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); 
+  background: #ffffff;
+  transition: transform 0.3s ease; 
+}
+
+.assignment-card:hover {
+  transform: translateY(-5px); /* Lift effect on hover */
 }
 
 .assignment-card p {
   font-size: 16px;
-  color: #333;
+  color: #2c3e50;
 }
 
 .mat-card-actions button {
-  margin-right: 8px;
+  margin-right: 10px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.mat-card-actions button:hover {
+  transform: translateY(-2px); 
 }
 
 .assignment-card mat-card-title {
-  font-weight: bold;
-  font-size: 22px;
+  font-weight: 600;
+  font-size: 24px;
   color: #2c3e50;
+  margin-bottom: 15px;
 }
 
 .file-upload-container {
@@ -26,7 +38,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-top: 20px;
+  margin-top: 25px;
+  padding: 15px;  
+  background: #f0f4f8;
+  border-radius: 10px;
 }
 
 .file-input {
@@ -71,12 +86,13 @@
 }
 
 .view-submission {
-  margin-top: 10px;
-  font-size: 14px;
+  display: inline-block;
+  margin-top: 15px;
+  font-size: 15px;
   color: #1976D2;
   text-decoration: none;
-  font-weight: bold;
-  transition: 0.3s;
+  font-weight: 600;
+  transition: color 0.3s ease;
 }
 
 .view-submission:hover {
@@ -85,21 +101,23 @@
 
 .submission-status {
   font-size: 16px;
-  font-weight: bold;
-  margin-top: 15px;
-  padding: 10px;
+  font-weight: 600;
+  margin: 15px 0;
+  padding: 12px;
   border-radius: 8px;
   text-align: center;
 }
 
 .submitted {
-  background-color: #E8F5E9;
-  color: #2E7D32;
+  background-color: #d5f5e3; 
+  color: #27ae60; 
+  border-left: 4px solid #27ae60; 
 }
 
 .not-submitted {
-  background-color: #FFEBEE;
-  color: #C62828;
+  background-color: #fadbd8; /* Softer red */
+  color: #c0392b; /* Matching red */
+  border-left: 4px solid #c0392b;
 }
 
 .grade-feedback-container {
@@ -111,6 +129,69 @@
 
 .grade-input, .feedback-input {
   width: 100%;
+}
+
+/* Grade and Feedback Labels */
+.grade-input mat-label,
+.feedback-input mat-label {
+  color: #2980b9; /* Cool blue, unchanged as it’s already blue */
+}
+
+/* Input and Textarea Text */
+input.mat-input-element,
+textarea.mat-input-element {
+  color: #2c3e50; /* Dark slate, unchanged for consistency */
+}
+
+/* Primary Button (Submit Grade) - Blue */
+button[color="primary"] {
+  background-color: #3498db; /* Bright blue */
+  color: white;
+}
+
+button[color="primary"]:hover {
+  background-color: #2980b9; /* Darker blue */
+}
+
+/* Accent Button (Edit) - Teal */
+button[color="accent"] {
+  background-color: #16a085; /* Vibrant teal */
+  color: white;
+}
+
+button[color="accent"]:hover {
+  background-color: #117864; /* Darker teal */
+}
+
+/* Warn Button (Delete) - Warm Red */
+button[color="warn"] {
+  background-color: #e74c3c; /* Warm red, unchanged as it fits your request */
+  color: white;
+}
+
+button[color="warn"]:hover {
+  background-color: #c0392b; /* Darker warm red, unchanged */
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .assignment-card {
+    max-width: 90%;
+    padding: 15px;
+  }
+
+  mat-card-title {
+    font-size: 20px;
+  }
+
+  .file-label, .submit-button {
+    font-size: 14px;
+    padding: 10px 15px;
+  }
+
+  .grade-feedback-container {
+    padding: 10px;
+  }
 }
 
 

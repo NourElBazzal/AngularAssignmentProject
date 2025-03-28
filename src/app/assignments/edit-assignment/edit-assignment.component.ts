@@ -21,7 +21,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
   styleUrls: ['./edit-assignment.component.css']
 })
 export class EditAssignmentComponent implements OnInit {
-  assignment: Assignment = { id: 0, name: '', dueDate: new Date(), submitted: false };
+  assignment: Assignment = { id: 0, name: '', dueDate: new Date(), submitted: false, fileUrl: '' };
+  originalSubmitted: boolean = false; // Track original submitted state
 
   constructor(
     private route: ActivatedRoute,
@@ -33,10 +34,12 @@ export class EditAssignmentComponent implements OnInit {
     const id = Number(this.route.snapshot.paramMap.get('id'));
 
     this.assignmentsService.getAssignment(id).subscribe((assignment) => {
-      if (assignment) this.assignment = assignment;
+      if (assignment) {
+        this.assignment = { ...assignment }; // Clone to avoid direct mutation
+        this.originalSubmitted = assignment.submitted; // Store original state
+      }
     });
 
-    // Récupérer les queryParams et fragments
     this.route.queryParams.subscribe(params => {
       console.log("Query Params:", params);
     });
@@ -47,6 +50,14 @@ export class EditAssignmentComponent implements OnInit {
   }
 
   onSubmit() {
+    // If submitted changes from true to false, clear fileUrl, grade, and feedback
+    if (this.originalSubmitted && !this.assignment.submitted) {
+      this.assignment.fileUrl = ''; // Clear the file URL
+      this.assignment.grade = undefined; // Reset grade
+      this.assignment.feedback = ''; // Reset feedback
+      console.log('Assignment unmarked as submitted; fileUrl, grade, and feedback cleared.');
+    }
+
     this.assignmentsService.updateAssignment(this.assignment).subscribe(() => {
       this.router.navigate(['/assignment', this.assignment.id]);
     });

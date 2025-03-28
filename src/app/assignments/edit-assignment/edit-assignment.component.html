@@ -1,6 +1,6 @@
 <div class="container">
-    <h2>Edit Assignment</h2>
-    <form  #assignmentForm="ngForm" (ngSubmit)="onSubmit()" class="form">
+  <h2>Edit Assignment</h2>
+  <form #assignmentForm="ngForm" (ngSubmit)="onSubmit()" class="form">
     <mat-form-field>
         <mat-label>Assignment Name</mat-label>
         <input matInput [(ngModel)]="assignment.name" name="name"/>
@@ -16,5 +16,5 @@
     <mat-checkbox [(ngModel)]="assignment.submitted" name="submitted">Submitted</mat-checkbox>
 
     <button mat-raised-button color="primary" type="submit">Save</button>
-    </form>
+  </form>
 </div>

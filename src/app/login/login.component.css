@@ -2,26 +2,94 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* Full screen height */
-  
+  height: 100vh;
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); /* Warm peach gradient */
 }
 
 .login-card {
-  width: 400px;
-  padding: 30px;
+  width: 100%;
+  max-width: 400px;
+  padding: 40px 30px;
   text-align: center;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
-  background: white;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  background: #fff7e6;
+  animation: fadeIn 0.5s ease-in-out;
 }
 
 .full-width {
   width: 100%;
-  margin-bottom: 15px; 
+  margin-bottom: 20px;
 }
 
+mat-card-title {
+  font-size: 24px;
+  font-weight: 500;
+  color: #e67e22;
+  margin-bottom: 20px;
+}
+
+/* Input field styling */
+mat-form-field.mat-form-field {
+  background: #f0f4f8; 
+  border-radius: 8px;
+}
+
+mat-label {
+  color: #2980b9; 
+}
+
+input.mat-input-element {
+  color: #2c3e50; 
+}
+
+button.mat-raised-button {
+  padding: 10px 0;
+  font-size: 16px;
+  background-color: #27ae60; 
+  color: white;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button.mat-raised-button:hover {
+  background-color: #219653;
+  transform: translateY(-2px);
+}
+
+/* Error message with a bold accent */
 .error-text {
-  color: red;
+  color: #c0392b; /* Deep red for urgency */
   font-size: 14px;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  padding: 5px 10px;
+  background: rgba(192, 57, 43, 0.1); /* Light red background */
+  border-radius: 4px;
+}
+
+/* Animation for card entrance */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .login-card {
+    max-width: 90%;
+    padding: 20px 15px;
+  }
+
+  mat-card-title {
+    font-size: 20px;
+  }
+
+  button.mat-raised-button {
+    font-size: 14px;
+  }
 }

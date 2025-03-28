@@ -39,16 +39,15 @@ export class AssignmentDetailComponent {
   ) {}
 
   ngOnInit() {
-    const id = +this.route.snapshot.params['id']; 
-    console.log("Fetching assignment with ID:", id); 
+    this.loadAssignment();
   
-    this.assignmentsService.getAssignment(id).subscribe((assignment) => {
-      if (assignment) {
-        this.assignment = assignment;
-        console.log("Assignment found:", this.assignment); 
-      } else {
-        console.log("No assignment found with this ID! Redirecting...");
-        this.router.navigate(['/']); 
+    // Listen for route param changes to refresh data
+    this.route.params.subscribe(params => {
+      const newId = +params['id'];
+      if (newId !== this.assignment?.id) {
+        this.assignmentsService.getAssignment(newId).subscribe((assignment) => {
+          if (assignment) this.assignment = assignment;
+        });
       }
     });
   }
@@ -139,6 +138,21 @@ export class AssignmentDetailComponent {
         this.assignmentsService.updateAssignment(this.assignment).subscribe(() => {
           console.log("Grade & feedback updated successfully:", this.assignment);
         });
+      }
+    });
+  }
+
+  loadAssignment() {
+    const id = +this.route.snapshot.params['id']; 
+    console.log("Fetching assignment with ID:", id); 
+    
+    this.assignmentsService.getAssignment(id).subscribe((assignment) => {
+      if (assignment) {
+        this.assignment = assignment;
+        console.log("Assignment found:", this.assignment); 
+      } else {
+        console.log("No assignment found with this ID! Redirecting...");
+        this.router.navigate(['/']); 
       }
     });
   }
