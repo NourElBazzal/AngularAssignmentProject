@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Assignment } from '../assignment.model'; 
+import { Assignment } from '../assignment.model';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
-import {MatFormFieldModule} from '@angular/material/form-field';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { AssignmentsService } from '../../shared/assignments.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -19,14 +19,15 @@ import { MatInputModule } from '@angular/material/input';
 @Component({
   selector: 'app-assignment-detail',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatCheckboxModule, 
+  imports: [
+    CommonModule, MatCardModule, MatCheckboxModule,
     MatButtonModule, MatFormFieldModule, MatSlideToggleModule,
-     MatDialogModule, FormsModule, MatInputModule], 
+    MatDialogModule, FormsModule, MatInputModule
+  ],
   templateUrl: './assignment-detail.component.html',
   styleUrls: ['./assignment-detail.component.css']
 })
-
-export class AssignmentDetailComponent {
+export class AssignmentDetailComponent implements OnInit {
   assignment?: Assignment;
   selectedFile: File | null = null;
 
@@ -40,14 +41,21 @@ export class AssignmentDetailComponent {
 
   ngOnInit() {
     this.loadAssignment();
-  
-    // Listen for route param changes to refresh data
-    this.route.params.subscribe(params => {
-      const newId = +params['id'];
-      if (newId !== this.assignment?.id) {
-        this.assignmentsService.getAssignment(newId).subscribe((assignment) => {
-          if (assignment) this.assignment = assignment;
-        });
+  }
+
+  loadAssignment() {
+    const id = +this.route.snapshot.params['id'];
+    this.assignmentsService.getAssignment(id).subscribe({
+      next: (assignment) => {
+        if (assignment) {
+          this.assignment = assignment;
+        } else {
+          this.router.navigate(['/']);
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching assignment:', err);
+        this.router.navigate(['/']);
       }
     });
   }
@@ -57,39 +65,43 @@ export class AssignmentDetailComponent {
   }
 
   onSubmitAssignment() {
-    if (!this.assignment || !this.selectedFile) return; 
-  
+    if (!this.assignment || !this.selectedFile) return;
+
     const dialogRef = this.dialog.open(SubmissionConfirmDialogComponent, {
       width: '350px',
       data: { assignmentName: this.assignment.name }
     });
-  
+
     dialogRef.afterClosed().subscribe((confirmed) => {
-      if (confirmed && this.assignment && this.selectedFile) { 
-        const fileUrl = URL.createObjectURL(this.selectedFile as Blob); 
-        this.assignmentsService.submitAssignment(this.assignment.id, fileUrl).subscribe(() => {
-          if (this.assignment) {
-            this.assignment.submitted = true;
-            this.assignment.fileUrl = fileUrl;
-          }
-          console.log('Assignment submitted successfully.');
+      if (confirmed && this.assignment && this.selectedFile) {
+        const fileUrl = URL.createObjectURL(this.selectedFile as Blob); // Replace with backend upload later
+        this.assignmentsService.submitAssignment(this.assignment.id, fileUrl).subscribe({
+          next: (message) => {
+            console.log(message);
+            this.loadAssignment(); // Refresh data from API
+          },
+          error: (err) => console.error('Error submitting assignment:', err)
         });
       }
     });
   }
-  
+
   onDelete() {
     if (!this.assignment) return;
-  
+
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
       data: { assignmentName: this.assignment.name },
     });
-  
+
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.assignmentsService.deleteAssignment(this.assignment?.id!).subscribe(() => {
-          this.router.navigate(['/']); // Navigate back after deletion
+        this.assignmentsService.deleteAssignment(this.assignment?.id!).subscribe({
+          next: (message) => {
+            console.log(message);
+            this.router.navigate(['/']);
+          },
+          error: (err) => console.error('Error deleting assignment:', err)
         });
       }
     });
@@ -98,17 +110,17 @@ export class AssignmentDetailComponent {
   onToggleSubmission() {
     if (this.assignment) {
       this.assignment.submitted = !this.assignment.submitted;
-      this.assignmentsService.updateAssignment(this.assignment).subscribe((message) => {
-        console.log(message);
+      this.assignmentsService.updateAssignment(this.assignment).subscribe({
+        next: (message) => console.log(message),
+        error: (err) => console.error('Error toggling submission:', err)
       });
     }
   }
 
   onClickEdit() {
-    if (!this.assignment) return; 
-
-    this.router.navigate(['/assignment', this.assignment?.id, 'edit'], {
-      queryParams: { name: this.assignment?.name },
+    if (!this.assignment) return;
+    this.router.navigate(['/assignment', this.assignment.id, 'edit'], {
+      queryParams: { name: this.assignment.name },
       fragment: 'editing'
     });
   }
@@ -118,7 +130,7 @@ export class AssignmentDetailComponent {
   }
 
   onSubmitGrade() {
-    if (!this.assignment) return; 
+    if (!this.assignment) return;
 
     const dialogRef = this.dialog.open(ConfirmGradeDialogComponent, {
       width: '400px',
@@ -130,33 +142,16 @@ export class AssignmentDetailComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result && this.assignment) {
-        console.log("Dialog result:", result); // Debugging
-
-        this.assignment.grade = result.grade;  
+        this.assignment.grade = result.grade;
         this.assignment.feedback = result.feedback;
-
-        this.assignmentsService.updateAssignment(this.assignment).subscribe(() => {
-          console.log("Grade & feedback updated successfully:", this.assignment);
+        this.assignmentsService.updateAssignment(this.assignment).subscribe({
+          next: (message) => {
+            console.log(message);
+            this.loadAssignment(); // Refresh data from API
+          },
+          error: (err) => console.error('Error updating grade:', err)
         });
       }
     });
   }
-
-  loadAssignment() {
-    const id = +this.route.snapshot.params['id']; 
-    console.log("Fetching assignment with ID:", id); 
-    
-    this.assignmentsService.getAssignment(id).subscribe((assignment) => {
-      if (assignment) {
-        this.assignment = assignment;
-        console.log("Assignment found:", this.assignment); 
-      } else {
-        console.log("No assignment found with this ID! Redirecting...");
-        this.router.navigate(['/']); 
-      }
-    });
-  }
-
-
-
 }
