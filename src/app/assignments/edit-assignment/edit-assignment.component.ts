@@ -14,14 +14,14 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
   selector: 'app-edit-assignment',
   standalone: true,
   imports: [
-    FormsModule, MatFormFieldModule, MatButtonModule, 
+    FormsModule, MatFormFieldModule, MatButtonModule,
     MatInputModule, MatDatepickerModule, MatNativeDateModule, MatCheckboxModule
   ],
   templateUrl: './edit-assignment.component.html',
   styleUrls: ['./edit-assignment.component.css']
 })
 export class EditAssignmentComponent implements OnInit {
-  assignment: Assignment = { id: 0, name: '', dueDate: new Date(), submitted: false, fileUrl: '' };
+  assignment: Assignment = { _id: '', id: 0, name: '', dueDate: new Date(), submitted: false };
   originalSubmitted: boolean = false;
 
   constructor(
@@ -32,10 +32,21 @@ export class EditAssignmentComponent implements OnInit {
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
+    console.log('Fetching assignment with ID:', id);
     this.assignmentsService.getAssignment(id).subscribe({
       next: (assignment) => {
         if (assignment) {
-          this.assignment = { ...assignment };
+          console.log('Fetched assignment:', assignment);
+          this.assignment = {
+            _id: assignment._id || '',
+            id: assignment.id || 0,
+            name: assignment.name || 'Untitled',
+            dueDate: assignment.dueDate ? new Date(assignment.dueDate) : new Date(),
+            submitted: assignment.submitted || false,
+            fileUrl: assignment.fileUrl,
+            grade: assignment.grade,
+            feedback: assignment.feedback
+          };
           this.originalSubmitted = assignment.submitted;
         } else {
           console.log('Assignment not found');
@@ -47,17 +58,14 @@ export class EditAssignmentComponent implements OnInit {
         this.router.navigate(['/']);
       }
     });
-
-    this.route.queryParams.subscribe(params => {
-      console.log("Query Params:", params);
-    });
-
-    this.route.fragment.subscribe(fragment => {
-      console.log("Fragment:", fragment);
-    });
   }
 
   onSubmit() {
+    console.log('Submitting assignment:', this.assignment);
+    if (!this.assignment.name || !this.assignment.dueDate) {
+      console.error('Name and due date are required');
+      return;
+    }
     this.assignmentsService.updateAssignment(this.assignment).subscribe({
       next: (response) => {
         console.log('Assignment updated successfully:', response);

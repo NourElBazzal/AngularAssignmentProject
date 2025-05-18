@@ -3,12 +3,12 @@
   <form #assignmentForm="ngForm" (ngSubmit)="onSubmit()" class="form">
     <mat-form-field>
         <mat-label>Assignment Name</mat-label>
-        <input matInput [(ngModel)]="assignment.name" name="name"/>
+        <input matInput [(ngModel)]="assignment.name" name="name"required>
     </mat-form-field>
 
     <mat-form-field>
         <mat-label>Due Date</mat-label>
-        <input matInput [matDatepicker]="picker" [(ngModel)]="assignment.dueDate" name="dueDate"/>
+        <input matInput [matDatepicker]="picker" [(ngModel)]="assignment.dueDate" name="dueDate" required>
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>

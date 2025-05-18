@@ -1,5 +1,5 @@
 export class Assignment{
-    _id?: string; // MongoDB ObjectId, optional for local storage
+    _id?:string; // Optional, as it may not be present when creating a new assignment
     id!:number;  
     name!:string;
     dueDate!:Date;

@@ -1,44 +1,43 @@
 import { Component, OnInit } from '@angular/core';
-import {CommonModule} from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { SubmittedDirective } from '../shared/submitted.directive';
 import { NotSubmittedDirective } from '../shared/not-submitted.directive';
-import {FormsModule} from '@angular/forms';
-import {MatInputModule} from '@angular/material/input';
-import {MatButtonModule} from '@angular/material/button';
-import {MatDatepickerModule} from '@angular/material/datepicker';
-import {MatNativeDateModule} from '@angular/material/core';
-import {MatTableModule} from '@angular/material/table';
-import {MatListModule} from '@angular/material/list';
-import {MatToolbarModule} from '@angular/material/toolbar';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatCheckbox} from '@angular/material/checkbox';
-import {Assignment} from './assignment.model';
-import { AssignmentDetailComponent } from './assignment-detail/assignment-detail.component'; 
-import {AssignmentsService} from '../shared/assignments.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatTableModule } from '@angular/material/table';
+import { MatListModule } from '@angular/material/list';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { Assignment } from './assignment.model';
+import { AssignmentDetailComponent } from './assignment-detail/assignment-detail.component';
+import { AssignmentsService } from '../shared/assignments.service';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-assignments',
-  imports: [CommonModule, SubmittedDirective, NotSubmittedDirective, FormsModule, 
-    MatInputModule, MatButtonModule, MatDatepickerModule, MatNativeDateModule, 
-    MatFormFieldModule, MatCheckbox, MatToolbarModule, MatListModule, MatTableModule, 
-    AssignmentDetailComponent, RouterModule, MatSelectModule],
+  standalone: true,
+  imports: [
+    CommonModule, SubmittedDirective, NotSubmittedDirective, FormsModule,
+    MatInputModule, MatButtonModule, MatDatepickerModule, MatNativeDateModule,
+    MatFormFieldModule, MatCheckbox, MatToolbarModule, MatListModule, MatTableModule,
+    AssignmentDetailComponent, RouterModule, MatSelectModule
+  ],
   templateUrl: './assignments.component.html',
-  styleUrl: './assignments.component.css'
+  styleUrls: ['./assignments.component.css']
 })
-
-export class AssignmentsComponent implements OnInit{
-  ajoutActive= false;
-  assignmentName:string="";
-  dueDate:Date | null = new Date();
+export class AssignmentsComponent implements OnInit {
+  ajoutActive = false;
+  assignmentName: string = "";
+  dueDate: Date | null = new Date();
   formVisible = false;
   assignment?: Assignment;
-
   assignments: Assignment[] = [];
   assignmentClicked: Assignment | null = null;
-
   searchText: string = '';
   filterStatus: string = '';
   sortOrder: string = 'asc';
@@ -52,79 +51,94 @@ export class AssignmentsComponent implements OnInit{
 
   ngOnInit(): void {
     this.getAssignments();
-
-    setTimeout(() =>{
+    setTimeout(() => {
       this.ajoutActive = true;
     }, 2000);
   }
 
   getAssignments(): void {
-    this.assignmentsService.getAssignments().subscribe((data) => {
-      this.assignments = [...data];
-      this.applyFilters();
+    this.assignmentsService.getAssignments().subscribe({
+      next: (data) => {
+        this.assignments = [...data];
+        this.applyFilters();
+      },
+      error: (err) => console.error('Error fetching assignments:', err)
     });
   }
-  
+
   applyFilters() {
     let filtered = this.assignments;
-  
-    // 1- Search Filter
+
     if (this.searchText) {
       filtered = filtered.filter(a =>
         a.name.toLowerCase().includes(this.searchText.toLowerCase())
       );
     }
-  
-    // 2- Status Filter
+
     if (this.filterStatus === 'submitted') {
       filtered = filtered.filter(a => a.submitted);
     } else if (this.filterStatus === 'pending') {
       filtered = filtered.filter(a => !a.submitted);
     }
-  
-    // 3- Sort by Due Date
+
     filtered.sort((a, b) => {
       const dateA = new Date(a.dueDate).getTime();
       const dateB = new Date(b.dueDate).getTime();
       return this.sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
     });
-  
+
     this.filteredAssignments = filtered;
   }
-  
 
   onAddAssignmentBtnClick(): void {
-    this.assignmentClicked = null;  // Hide selected assignment
-    this.formVisible = true; // Show add form
+    this.assignmentClicked = null;
+    this.formVisible = true;
   }
 
   onAssignmentAdded(newAssignment: Assignment): void {
-    this.assignmentsService.addAssignment(newAssignment).subscribe(() => {
-      this.getAssignments(); // Ensure list refreshes
-      this.formVisible = false;
+    this.assignmentsService.addAssignment(newAssignment).subscribe({
+      next: () => {
+        this.getAssignments();
+        this.formVisible = false;
+      },
+      error: (err) => console.error('Error adding assignment:', err)
     });
   }
 
   onAssignmentDeleted(id: number): void {
-    this.assignmentsService.deleteAssignment(id).subscribe((message) => {
-      console.log(message);
-      this.getAssignments(); // Refresh list
+    this.assignmentsService.deleteAssignment(id).subscribe({
+      next: (message) => {
+        console.log(message);
+        this.getAssignments();
+      },
+      error: (err) => console.error('Error deleting assignment:', err)
     });
   }
 
   onAssignmentClick(assignment: Assignment) {
-    console.log("Navigating to assignment details:", assignment.id); 
+    console.log("Navigating to assignment details:", assignment.id);
     this.router.navigate(['/assignment', assignment.id]);
   }
-  
+
   toggleSubmission() {
     if (this.assignment) {
-      this.assignment.submitted = !this.assignment.submitted;
-      this.assignmentsService.updateAssignment(this.assignment).subscribe((message) => {
-        console.log(message);
+      this.assignmentsService.getAssignment(this.assignment.id).subscribe({
+        next: (fullAssignment) => {
+          if (fullAssignment) {
+            fullAssignment.submitted = !fullAssignment.submitted;
+            console.log('Updating assignment:', fullAssignment);
+            this.assignmentsService.updateAssignment(fullAssignment).subscribe({
+              next: (response) => {
+                console.log('Submission toggled:', response);
+                this.assignment = fullAssignment;
+                this.getAssignments();
+              },
+              error: (err) => console.error('Error updating submission:', err)
+            });
+          }
+        },
+        error: (err) => console.error('Error fetching assignment:', err)
       });
     }
   }
-    
 }
-
