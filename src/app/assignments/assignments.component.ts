@@ -17,6 +17,9 @@ import { AssignmentDetailComponent } from './assignment-detail/assignment-detail
 import { AssignmentsService } from '../shared/assignments.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatSelectModule } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
+
+
 
 @Component({
   selector: 'app-assignments',
@@ -25,7 +28,7 @@ import { MatSelectModule } from '@angular/material/select';
     CommonModule, SubmittedDirective, NotSubmittedDirective, FormsModule,
     MatInputModule, MatButtonModule, MatDatepickerModule, MatNativeDateModule,
     MatFormFieldModule, MatCheckbox, MatToolbarModule, MatListModule, MatTableModule,
-    AssignmentDetailComponent, RouterModule, MatSelectModule
+    AssignmentDetailComponent, RouterModule, MatSelectModule, MatIconModule
   ],
   templateUrl: './assignments.component.html',
   styleUrls: ['./assignments.component.css']
@@ -42,6 +45,10 @@ export class AssignmentsComponent implements OnInit {
   filterStatus: string = '';
   sortOrder: string = 'asc';
   filteredAssignments: Assignment[] = [];
+  itemsPerPage = 10;
+  pageSizeOptions = [10, 15, 20];
+  currentPage = 1;
+  paginatedAssignments: Assignment[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -88,6 +95,43 @@ export class AssignmentsComponent implements OnInit {
     });
 
     this.filteredAssignments = filtered;
+     this.currentPage = 1;
+    this.updatePaginatedAssignments();
+  }
+
+  updatePaginatedAssignments() {
+  const start = this.startItemIndex;
+  const end = this.endItemIndex;
+  this.paginatedAssignments = this.filteredAssignments.slice(start, end);
+}
+
+  onPaginationChange() {
+    this.currentPage = 1;
+    this.updatePaginatedAssignments();
+  }
+
+  goToFirstPage() {
+    this.currentPage = 1;
+    this.updatePaginatedAssignments();
+  }
+
+  goToPreviousPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.updatePaginatedAssignments();
+    }
+  }
+
+  goToNextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.updatePaginatedAssignments();
+    }
+  }
+
+  goToLastPage() {
+    this.currentPage = this.totalPages;
+    this.updatePaginatedAssignments();
   }
 
   onAddAssignmentBtnClick(): void {
@@ -141,4 +185,17 @@ export class AssignmentsComponent implements OnInit {
       });
     }
   }
+
+  get totalPages(): number {
+  return Math.ceil(this.filteredAssignments.length / this.itemsPerPage);
+}
+
+get startItemIndex(): number {
+  return (this.currentPage - 1) * this.itemsPerPage;
+}
+
+get endItemIndex(): number {
+  const end = this.startItemIndex + this.itemsPerPage;
+  return end > this.filteredAssignments.length ? this.filteredAssignments.length : end;
+}
 }

@@ -49,6 +49,69 @@ button:hover {
   min-width: 240px;
 }
 
+/* Pagination Section */
+
+ .pagination-wrapper {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  max-width: 800px;
+  width: 100%;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  flex-wrap: wrap;
+}
+
+
+.pagination-controls span {
+  font-weight: 500;
+  color: #333;
+}
+
+::ng-deep .no-border-select.mat-form-field-appearance-fill .mat-form-field-flex {
+  background-color: transparent !important;
+  border-radius: 4px;
+  padding: 0 !important;
+  height: 36px !important;
+  align-items: center;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+::ng-deep .no-border-select .mat-form-field-underline,
+::ng-deep .no-border-select .mat-form-field-subscript-wrapper {
+  display: none !important;
+}
+
+::ng-deep .no-border-select .mat-form-field-wrapper {
+  padding-bottom: 0 !important;
+}
+
+.items-select {
+  width: 70px;
+  margin: 0;
+  padding: 0;
+}
+
+
+.pagination-controls button {
+  background: none;
+  border: none;
+}
+
+mat-icon {
+  font-size: 20px;
+  color: #6C63FF;
+}
+
+
 /* Table Styling */
 .table-container {
   max-width: 800px;
