@@ -2,7 +2,11 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const cors = require('cors'); // IMPORT cors
+const cors = require('cors'); 
+
+// Serve static files from the 'uploads' directory
+app.use('/uploads', express.static('uploads'));
+
 
 // MongoDB connection
 mongoose.Promise = global.Promise;
@@ -15,21 +19,20 @@ const options = {
 
 mongoose.connect(uri, options)
   .then(() => {
-    console.log("✅ Connected to MongoDB at", uri);
-    console.log("🌐 Test with: http://localhost:8010/api/assignments");
+    console.log("Connected to MongoDB at", uri);
+    console.log("Test with: http://localhost:8010/api/assignments");
   })
   .catch(err => {
-    console.error("❌ MongoDB connection error:", err);
+    console.error("MongoDB connection error:", err);
   });
 
-// ✅ CORS middleware (replace manual headers)
 app.use(cors());
 
 // Body parsing middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// Routes
+//Routes
 const assignmentsRouter = require('./routes/assignments');
 const studentRouter = require('./routes/student');
 const professorRouter = require('./routes/professor');
@@ -44,7 +47,7 @@ app.use(prefix + '/login', loginRouter);
 // Start server
 const port = process.env.PORT || 8010;
 app.listen(port, '0.0.0.0', () => {
-  console.log(`🚀 Server started at http://localhost:${port}`);
+  console.log(`Server started at http://localhost:${port}`);
 });
 
 module.exports = app;

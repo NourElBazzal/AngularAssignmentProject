@@ -1,6 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const Assignment = require('../model/assignment');
+const multer = require('multer');
+const path = require('path');
+
+// Configure multer
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
+});
+const upload = multer({ storage });
 
 // Récupérer tous les assignments (GET)
 router.get('/', (req, res) => {
@@ -125,6 +138,42 @@ router.delete('/:id', (req, res) => {
       res.json({ message: `${assignment.name} deleted` });
     }
   });
+});
+
+// Submit assignment with file
+router.put('/:id/submit', upload.single('file'), (req, res) => {
+  const assignmentId = Number(req.params.id);
+  const submitted = req.body.submitted === 'true'; // Convert string to boolean
+
+  console.log('Submit assignment reçu :');
+  console.log('Params ID:', assignmentId);
+  console.log('Body:', req.body);
+  console.log('File:', req.file);
+
+  if (!req.file) {
+    console.log('Validation error: No file uploaded');
+    return res.status(400).send('No file uploaded');
+  }
+
+  const fileUrl = `/uploads/${req.file.filename}`;
+
+  Assignment.findOneAndUpdate(
+    { id: assignmentId },
+    { $set: { fileUrl, submitted } },
+    { new: true, runValidators: true },
+    (err, assignment) => {
+      if (err) {
+        console.error('Error submitting assignment:', err);
+        return res.status(500).send('Cannot submit assignment: ' + err.message);
+      }
+      if (!assignment) {
+        console.log('Assignment not found for id:', assignmentId);
+        return res.status(404).send('Assignment not found');
+      }
+      console.log('Assignment submitted:', assignment);
+      res.json({ message: 'Assignment submitted', assignment });
+    }
+  );
 });
 
 module.exports = router;
