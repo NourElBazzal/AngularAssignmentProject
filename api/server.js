@@ -3,10 +3,10 @@ const app = express();
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors'); 
+const path = require('path'); // Add path module
 
 // Serve static files from the 'uploads' directory
-app.use('/uploads', express.static('uploads'));
-
+app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads'))); // Change to lowercase uploads
 
 // MongoDB connection
 mongoose.Promise = global.Promise;
@@ -32,7 +32,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-//Routes
+// Routes
 const assignmentsRouter = require('./routes/assignments');
 const studentRouter = require('./routes/student');
 const professorRouter = require('./routes/professor');

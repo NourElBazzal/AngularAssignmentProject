@@ -7,7 +7,7 @@ const path = require('path');
 // Configure multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/');
+    cb(null, 'Uploads/'); // Change to lowercase uploads
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + path.extname(file.originalname));
@@ -155,7 +155,7 @@ router.put('/:id/submit', upload.single('file'), (req, res) => {
     return res.status(400).send('No file uploaded');
   }
 
-  const fileUrl = `/uploads/${req.file.filename}`;
+  const fileUrl = `/uploads/${req.file.filename}`; // Change to lowercase uploads
 
   Assignment.findOneAndUpdate(
     { id: assignmentId },
