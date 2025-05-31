@@ -1,39 +1,52 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { Observable, of } from 'rxjs';
+import { catchError, tap, map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private users = [
-    { username: 'admin', password: 'admin123', role: 'admin' },
-    { username: 'student', password: 'student123', role: 'student' }
-  ];
+  private apiUrl = 'http://localhost:8010/api/login';  // Unified login route
 
-  login(username: string, password: string): boolean {
-    console.log('Entered Username:', username);
-    console.log('Entered Password:', password);
-    const user = this.users.find(
-      u => u.username.toLowerCase() === username.toLowerCase() &&
-           u.password === password
+  constructor(private http: HttpClient, private router: Router) {}
+
+  login(email: string, password: string, role: 'student' | 'professor' | 'admin'): Observable<boolean> {
+    return this.http.post<any>(this.apiUrl, { email, password, role }).pipe(
+      tap(response => {
+        const user = response.student || response.professor || response.admin;
+
+        if (user) {
+          localStorage.setItem('token', 'dummy-token'); // Replace with real JWT if added
+          localStorage.setItem('role', role);
+          localStorage.setItem('userId', user.id.toString());
+          localStorage.setItem('userName', user.fullName || user.name || 'Admin');
+        }
+      }),
+      map(response => !!(response.student || response.professor || response.admin)),
+      catchError(error => {
+        console.error('Login failed', error);
+        return of(false);
+      })
     );
-    if (user) {
-      console.log('User found:', user);
-      localStorage.setItem('token', 'test_token');
-      localStorage.setItem('role', user.role);
-      return true;
-    }
-    console.log('Invalid credentials');
-    return false;
   }
-  
 
-  logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
+  logout(): void {
+    localStorage.clear();
+    this.router.navigate(['/login']);
   }
 
   getRole(): string | null {
     return localStorage.getItem('role');
+  }
+
+  getUserId(): string | null {
+    return localStorage.getItem('userId');
+  }
+
+  getUserName(): string | null {
+    return localStorage.getItem('userName');
   }
 
   isAdmin(): boolean {
@@ -44,7 +57,11 @@ export class AuthService {
     return this.getRole() === 'student';
   }
 
+  isProfessor(): boolean {
+    return this.getRole() === 'professor';
+  }
+
   isLoggedIn(): boolean {
-    return localStorage.getItem('token') !== null;
+    return !!localStorage.getItem('token');
   }
 }
