@@ -20,13 +20,12 @@
       }
 
       <!-- Display Submitted File - Only if submitted AND fileUrl exists -->
-      <!-- Replace the <a> tag -->
       @if (assignment.submitted && assignment.fileUrl) {
         <a [href]="getFileUrl(assignment.fileUrl)" target="_blank" class="view-submission">📄 View Submission</a>
       }
 
       <!-- Teacher: Grade and Feedback Input -->
-      <ng-container *ngIf="authService.isAdmin() && assignment.submitted">
+      <ng-container *ngIf="(authService.isAdmin() || authService.isProfessor()) && assignment.submitted">
         <div class="grade-feedback-container">
           <mat-form-field appearance="fill" class="grade-input">
             <mat-label>💯 Grade (out of 20)</mat-label>
@@ -48,7 +47,7 @@
     </mat-card-content>
 
     <mat-card-actions>
-      @if (authService.isAdmin()) {
+      @if (authService.isAdmin() || authService.isProfessor()) {
         <button mat-raised-button color="accent" (click)="onClickEdit()">Edit</button>
         <button mat-raised-button color="warn" (click)="onDelete()">🗑 Delete</button>
       }
