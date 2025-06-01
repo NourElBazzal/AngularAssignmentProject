@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu'; // Add MatMenuModule
 import { RouterModule } from '@angular/router';
 import { AuthService } from './shared/auth.service';
 import { Router } from '@angular/router';
@@ -12,9 +13,16 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, MatToolbarModule, 
-    MatButtonModule, MatSidenavModule, 
-    MatListModule, MatIconModule, RouterModule],
+  imports: [
+    CommonModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatSidenavModule,
+    MatListModule,
+    MatIconModule,
+    MatMenuModule, // Add to imports
+    RouterModule
+  ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })

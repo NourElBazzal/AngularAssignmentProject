@@ -1,0 +1,22 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Edit Profile</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="profile-image">
+      <img [src]="userImage" alt="Profile Picture" class="avatar">
+      <input type="file" (change)="onImageChange($event)" accept="image/*">
+    </div>
+    <mat-form-field appearance="outline">
+      <mat-label>Name</mat-label>
+      <input matInput [(ngModel)]="userName" required>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>New Password</mat-label>
+      <input matInput type="password" [(ngModel)]="newPassword">
+    </mat-form-field>
+    <mat-error *ngIf="errorMessage">{{ errorMessage }}</mat-error>
+    <button mat-raised-button color="primary" (click)="onSave()" [disabled]="!userName">Save</button>
+    <button mat-raised-button (click)="goBack()">Cancel</button>
+  </mat-card-content>
+</mat-card>

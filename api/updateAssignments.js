@@ -50,24 +50,32 @@ async function updateAssignments() {
         const courseId = mongoose.Types.ObjectId(courseIdStr);
         const courseName = courseMap.get(courseIdStr) || `Course ${courseIdStr}`;
 
-        // Look for an existing assignment with this courseId that isn't assigned or matches this student
+        // Look for an existing unassigned assignment with this courseId
         let assignment = await Assignment.findOne({ 
           courseId: courseId, 
           $or: [
             { studentId: { $exists: false } },
-            { studentId: null },
-            { studentId: student.id }
+            { studentId: null }
           ]
         });
 
         if (assignment) {
-          // Update the assignment with studentId and name
+          // Update the unassigned assignment with studentId and name
           assignment.studentId = student.id;
           assignment.name = `${courseName} - ${student.fullName}`;
           await assignment.save();
-          console.log(`Assigned and updated existing assignment for course "${courseName}" to student ${student.id}: ${assignment._id}`);
+          console.log(`Assigned and updated existing unassigned assignment for course "${courseName}" to student ${student.id}: ${assignment._id}`);
         } else {
-          // Create a new assignment if none exists
+          // Check if an assignment exists for this courseId with a different studentId
+          const existingAssigned = await Assignment.findOne({ 
+            courseId: courseId, 
+            studentId: { $ne: student.id }
+          });
+          if (existingAssigned) {
+            console.log(`Found existing assignment for course "${courseName}" assigned to another student (${existingAssigned.studentId}). Creating new assignment.`);
+          }
+
+          // Create a new assignment
           assignment = new Assignment({
             id: assignmentIdCounter++,
             name: `${courseName} - ${student.fullName}`,
