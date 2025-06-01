@@ -5,6 +5,7 @@ export class Assignment{
     dueDate!:Date;
     submitted!:boolean;
     fileUrl?: string; // Stores the uploaded file's URL
+    courseId?: string;
     grade?: number;   
     feedback?: string;
 }

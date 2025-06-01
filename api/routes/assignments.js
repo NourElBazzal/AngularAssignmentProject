@@ -47,6 +47,7 @@ router.post('/', (req, res) => {
     id: req.body.id,
     name: req.body.name,
     dueDate: req.body.dueDate,
+    courseId: req.body.courseId, // Add courseId
     submitted: req.body.submitted || false,
     fileUrl: req.body.fileUrl,
     grade: req.body.grade,
@@ -102,6 +103,7 @@ router.put('/:id', (req, res) => {
   const updateData = {};
   if (req.body.name !== undefined) updateData.name = req.body.name;
   if (req.body.dueDate !== undefined) updateData.dueDate = req.body.dueDate;
+  if (req.body.courseId !== undefined) updateData.courseId = req.body.courseId; // Add courseId
   if (req.body.submitted !== undefined) updateData.submitted = req.body.submitted;
   if (req.body.fileUrl !== undefined) updateData.fileUrl = req.body.fileUrl;
   if (req.body.grade !== undefined) updateData.grade = req.body.grade;

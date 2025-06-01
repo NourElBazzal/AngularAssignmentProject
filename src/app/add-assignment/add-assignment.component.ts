@@ -1,39 +1,74 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Assignment } from '../assignments/assignment.model';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { Router } from '@angular/router';
 import { AssignmentsService } from '../shared/assignments.service';
 import { MatNativeDateModule } from '@angular/material/core';
+import { HttpClient } from '@angular/common/http';
+import { CommonModule } from '@angular/common'; // Add CommonModule
 
 @Component({
   selector: 'app-add-assignment',
   standalone: true,
   imports: [
-    MatFormFieldModule, MatButtonModule, FormsModule,
-    MatDatepickerModule, MatInputModule, MatNativeDateModule
+    CommonModule, // Add CommonModule for *ngFor
+    MatFormFieldModule, 
+    MatButtonModule, 
+    FormsModule,
+    MatDatepickerModule, 
+    MatInputModule, 
+    MatNativeDateModule,
+    MatSelectModule
   ],
   templateUrl: './add-assignment.component.html',
   styleUrls: ['./add-assignment.component.css']
 })
-export class AddAssignmentComponent {
+export class AddAssignmentComponent implements OnInit {
   assignmentName: string = '';
   dueDate: Date = new Date();
+  selectedCourseId: string = '';
+  courses: any[] = [];
   newAssignment: Assignment = { id: 0, name: '', dueDate: new Date(), submitted: false };
 
-  constructor(private assignmentsService: AssignmentsService, private router: Router) {}
+  constructor(
+    private assignmentsService: AssignmentsService,
+    private router: Router,
+    private http: HttpClient
+  ) {}
+
+  ngOnInit() {
+    this.fetchCourses();
+  }
+
+  fetchCourses() {
+    this.http.get<any[]>('http://localhost:8010/api/courses').subscribe({
+      next: (courses) => {
+        this.courses = courses;
+        if (courses.length > 0) {
+          this.selectedCourseId = courses[0]._id; // Default to first course
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching courses:', err);
+        alert('Failed to load courses: ' + err.message);
+      }
+    });
+  }
 
   onSubmit() {
     this.newAssignment.name = this.assignmentName;
     this.newAssignment.dueDate = this.dueDate;
     this.newAssignment.submitted = false;
+    this.newAssignment.courseId = this.selectedCourseId;
 
-    if (!this.newAssignment.name || !this.newAssignment.dueDate) {
-      console.error('Name and due date are required');
-      alert('Name and due date are required');
+    if (!this.newAssignment.name || !this.newAssignment.dueDate || !this.selectedCourseId) {
+      console.error('Name, due date, and course are required');
+      alert('Name, due date, and course are required');
       return;
     }
 

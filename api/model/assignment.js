@@ -12,3 +12,4 @@ const assignmentSchema = new mongoose.Schema({
 }, { _id: true }); // Ensure MongoDB handles _id
 
 module.exports = mongoose.model('Assignment', assignmentSchema);
+

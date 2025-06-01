@@ -39,13 +39,15 @@ mat-form-field:hover {
   transform: scale(1.02);
 }
 
-mat-form-field input {
+mat-form-field input,
+mat-form-field mat-select {
   font-size: 16px;
   border-bottom: 2px solid #6C63FF;
   transition: all 0.3s ease-in-out;
 }
 
-mat-form-field input:focus {
+mat-form-field input:focus,
+mat-form-field mat-select:focus {
   border-bottom: 2px solid #FF6B6B;
 }
 
