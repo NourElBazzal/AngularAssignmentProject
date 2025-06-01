@@ -40,8 +40,8 @@ export class AssignmentsService {
     return this.http.put<string>(`${this.apiUrl}/${updatedAssignment.id}`, updatedAssignment);
   }
 
-  submitAssignment(id: number, fileUrl: string): Observable<string> {
+  submitAssignment(id: number, formData: FormData): Observable<any> {
     this.loggingService.log(`Assignment ID: ${id}`, 'Submitting');
-    return this.http.put<string>(`${this.apiUrl}/${id}`, { submitted: true, fileUrl });
+    return this.http.put(`${this.apiUrl}/${id}/submit`, formData);
   }
 }

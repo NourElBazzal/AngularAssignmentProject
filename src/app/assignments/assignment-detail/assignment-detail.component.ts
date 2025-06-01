@@ -30,6 +30,7 @@ import { MatInputModule } from '@angular/material/input';
 export class AssignmentDetailComponent implements OnInit {
   assignment?: Assignment;
   selectedFile: File | null = null;
+  baseUrl = 'http://localhost:8010';
 
   constructor(
     private route: ActivatedRoute,
@@ -38,6 +39,14 @@ export class AssignmentDetailComponent implements OnInit {
     private dialog: MatDialog,
     public authService: AuthService
   ) {}
+
+  getFileUrl(fileUrl: string): string {
+    // Normalize to lowercase uploads
+    if (fileUrl.startsWith('/Uploads')) {
+      fileUrl = fileUrl.replace('/Uploads', '/uploads');
+    }
+    return fileUrl.startsWith('/uploads') ? `${this.baseUrl}${fileUrl}` : fileUrl;
+  }
 
   ngOnInit() {
     this.loadAssignment();
@@ -74,11 +83,14 @@ export class AssignmentDetailComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((confirmed) => {
       if (confirmed && this.assignment && this.selectedFile) {
-        const fileUrl = URL.createObjectURL(this.selectedFile as Blob); // Replace with backend upload later
-        this.assignmentsService.submitAssignment(this.assignment.id, fileUrl).subscribe({
-          next: (message) => {
-            console.log(message);
-            this.loadAssignment(); // Refresh data from API
+        const formData = new FormData();
+        formData.append('file', this.selectedFile);
+        formData.append('submitted', 'true');
+
+        this.assignmentsService.submitAssignment(this.assignment.id, formData).subscribe({
+          next: (response) => {
+            console.log('Assignment submitted:', response);
+            this.loadAssignment();
           },
           error: (err) => console.error('Error submitting assignment:', err)
         });

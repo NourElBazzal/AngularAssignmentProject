@@ -20,8 +20,9 @@
       }
 
       <!-- Display Submitted File - Only if submitted AND fileUrl exists -->
+      <!-- Replace the <a> tag -->
       @if (assignment.submitted && assignment.fileUrl) {
-        <a [href]="assignment.fileUrl" target="_blank" class="view-submission">📄 View Submission</a>
+        <a [href]="getFileUrl(assignment.fileUrl)" target="_blank" class="view-submission">📄 View Submission</a>
       }
 
       <!-- Teacher: Grade and Feedback Input -->

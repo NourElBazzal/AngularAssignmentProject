@@ -8,7 +8,7 @@ import { catchError, tap, map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8010/api/login';  // Unified login route
+  private apiUrl = 'http://localhost:8010/api/login'; // Unified login route
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -21,7 +21,10 @@ export class AuthService {
           localStorage.setItem('token', 'dummy-token'); // Replace with real JWT if added
           localStorage.setItem('role', role);
           localStorage.setItem('userId', user.id.toString());
+          // Store name based on role
           localStorage.setItem('userName', user.fullName || user.name || 'Admin');
+          // Store image
+          localStorage.setItem('userImage', user.image || 'https://ui-avatars.com/api/?name=Admin');
         }
       }),
       map(response => !!(response.student || response.professor || response.admin)),
@@ -47,6 +50,10 @@ export class AuthService {
 
   getUserName(): string | null {
     return localStorage.getItem('userName');
+  }
+
+  getUserImage(): string | null {
+    return localStorage.getItem('userImage');
   }
 
   isAdmin(): boolean {

@@ -5,6 +5,6 @@ import { Injectable } from '@angular/core';
 })
 export class LoggingService {
   log(assignmentName: string, action: string) {
-    console.log(`📌 Assignment: "${assignmentName}" has been ${action}.`);
+    console.log(`Assignment: "${assignmentName}" has been ${action}.`);
   }
 }

@@ -18,7 +18,6 @@ import { Router } from '@angular/router';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-
 export class AppComponent {
   isSidebarOpen = false;
 
@@ -30,6 +29,14 @@ export class AppComponent {
 
   logout() {
     this.authService.logout();
-    this.router.navigate(['/login']); // Redirect to login page
+    this.router.navigate(['/login']);
+  }
+
+  getUserName(): string {
+    return this.authService.getUserName() || 'User';
+  }
+
+  getUserImage(): string {
+    return this.authService.getUserImage() || 'https://ui-avatars.com/api/?name=User';
   }
 }

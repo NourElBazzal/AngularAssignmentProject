@@ -1,0 +1,165 @@
+.courses-container {
+  padding: 20px;
+  background-color: #F5F7FA; /* Soft Gray background */
+}
+
+h2 {
+  font-size: 28px;
+  color: #26A69A; /* Teal */
+  margin-bottom: 20px;
+  font-weight: 600;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+mat-grid-list {
+  background-color: #F5F7FA;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Ensure uniform tile width and height */
+.grid-tile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+mat-grid-tile {
+  width: calc(100% / 3 - 16px) !important; /* Adjust for 3 columns and gutter */
+  margin: 8px; /* Half of gutterSize for even spacing */
+  background-color: transparent;
+}
+
+.course-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%; /* Fill the tile */
+  background: linear-gradient(135deg, #FFFFFF 0%, #F9F9F9 100%); /* Subtle gradient */
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+}
+
+.course-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  border: 2px solid #AEEA00; /* Lime Green border on hover */
+}
+
+.course-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+mat-card-header {
+  flex-grow: 0;
+  background-color: #26A69A; /* Teal */
+  padding: 10px 16px;
+  margin-bottom: 10px;
+}
+
+mat-card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #FFFFFF; /* White text on teal background */
+  text-align: center;
+}
+
+mat-card-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 16px;
+  background-color: #FFFFFF;
+  border-top: 1px solid #E0E0E0;
+}
+
+h4 {
+  font-size: 16px;
+  font-weight: 500;
+  color: #FF6F61; /* Coral */
+  margin: 10px 0 5px;
+  text-transform: uppercase;
+}
+
+p {
+  color: #666;
+  font-style: italic;
+}
+
+.professor {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding: 5px;
+  border-radius: 8px;
+  background-color: #F5F7FA;
+  transition: background-color 0.3s ease;
+}
+
+.professor:hover {
+  background-color: #E0F7FA; /* Light Cyan on hover */
+}
+
+.professor-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #26A69A; /* Teal border */
+}
+
+mat-list-item {
+  font-size: 14px;
+  padding: 5px 0;
+  border-bottom: 1px solid #E0E0E0;
+}
+
+mat-list-item:last-child {
+  border-bottom: none;
+}
+
+.assignment-status {
+  margin-left: auto;
+  font-size: 12px;
+  color: #333;
+  background-color: #E8F5E9; /* Light Green background */
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+/* Responsive breakpoints */
+@media (max-width: 1200px) {
+  mat-grid-list {
+    cols: 2 !important;
+  }
+  mat-grid-tile {
+    width: calc(100% / 2 - 16px) !important; /* Adjust for 2 columns */
+  }
+}
+
+@media (max-width: 600px) {
+  mat-grid-list {
+    cols: 1 !important;
+  }
+  mat-grid-tile {
+    width: calc(100% - 16px) !important; 
+  }
+  .course-card {
+    border-radius: 8px;
+  }
+  .course-image {
+    height: 120px;
+  }
+  mat-card-title {
+    font-size: 16px;
+  }
+}
