@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
+import { CanActivate, ActivatedRouteSnapshot, Router } from '@angular/router';
 import { AuthService } from './auth.service';
 
 @Injectable({
@@ -8,12 +8,20 @@ import { AuthService } from './auth.service';
 export class AuthGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
 
-  canActivate(): boolean {
-    if (this.authService.isLoggedIn()) {
-      return true; // User is logged in, allow navigation
-    } else {
-      this.router.navigate(['/login']); // Redirect to login page
-      return false; // Block access
+  canActivate(route: ActivatedRouteSnapshot): boolean {
+    const expectedRole = route.data['role']; // optional role check
+    const userRole = this.authService.getRole();
+
+    if (!this.authService.isLoggedIn()) {
+      this.router.navigate(['/login']);
+      return false;
     }
+
+    if (expectedRole && userRole !== expectedRole) {
+      this.router.navigate(['/']); // optional: show "Not authorized" page
+      return false;
+    }
+
+    return true;
   }
 }
