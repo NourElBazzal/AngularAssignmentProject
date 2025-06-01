@@ -30,7 +30,7 @@ router.get('/:id', async (req, res) => {
 // Get student's courses with professors and assignments
 router.get('/:id/courses', async (req, res) => {
   try {
-    const student = await Student.findOne({ id: req.params.id });
+    const student = await Student.findOne({ id: req.params.id }).lean();
     if (!student) return res.status(404).json({ message: 'Student not found' });
 
     console.log('Student:', student); // Debug student data
@@ -43,8 +43,10 @@ router.get('/:id/courses', async (req, res) => {
     const courses = await Course.find({ _id: { $in: courseIds } }).lean();
     console.log('Courses:', courses);
 
-    // Fetch all assignments for the student
-    const studentAssignments = await Assignment.find({ _id: { $in: student.assignments } }, 'id name dueDate submitted grade courseId').lean();
+    // Fetch only the student's specific assignments
+    const studentAssignments = await Assignment.find({ 
+      _id: { $in: student.assignments.map(id => new mongoose.Types.ObjectId(id)) }
+    }, 'id name dueDate submitted grade courseId').lean();
     console.log('Student Assignments:', studentAssignments);
 
     // Fetch professors and assignments for each course
@@ -56,7 +58,7 @@ router.get('/:id/courses', async (req, res) => {
       ).lean();
       console.log(`Professors for course ${course._id}:`, professors);
 
-      // Filter assignments for this course
+      // Filter assignments for this course that belong to the student
       const assignments = studentAssignments.filter(assignment => 
         assignment.courseId && assignment.courseId.toString() === course._id.toString()
       );
@@ -77,7 +79,6 @@ router.get('/:id/courses', async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
-
 
 // Update a student
 router.put('/:id', async (req, res) => {

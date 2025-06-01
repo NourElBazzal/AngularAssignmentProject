@@ -6,29 +6,33 @@
 
   <span class="spacer"></span>
 
-  <!-- User Profile beside Logout -->
+  <!-- User Profile with Dropdown in Toolbar -->
   <div class="user-profile" *ngIf="authService.isLoggedIn()">
-    <img [src]="getUserImage()" alt="User Avatar" class="avatar">
-    <span class="user-name">{{ getUserName() }}</span>
+    <div class="profile-trigger" [matMenuTriggerFor]="profileMenu">
+      <img [src]="getUserImage()" alt="User Avatar" class="avatar">
+      <span class="user-name">{{ getUserName() }}</span>
+    </div>
+    <mat-menu #profileMenu="matMenu">
+      <button mat-menu-item routerLink="/profile">
+        <mat-icon>person</mat-icon> Profile
+      </button>
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>logout</mat-icon> Logout
+      </button>
+    </mat-menu>
   </div>
 
   <!-- Show Login Button if NOT Logged In -->
   <button mat-button color="accent" *ngIf="!authService.isLoggedIn()" routerLink="/login">
     <mat-icon>login</mat-icon> Login
   </button>
-
-  <!-- Show Logout Button if Logged In -->
-  <button mat-button color="warn" *ngIf="authService.isLoggedIn()" (click)="logout()">
-    <mat-icon>logout</mat-icon> Logout
-  </button>
 </mat-toolbar>
 
 <mat-sidenav-container class="container">
   <mat-sidenav #sidenav mode="side" [(opened)]="isSidebarOpen">
-    <!-- User Profile in Sidebar -->
+    <!-- User Profile (Avatar Only) in Sidebar -->
     <div class="sidebar-profile" *ngIf="authService.isLoggedIn()">
       <img [src]="getUserImage()" alt="User Avatar" class="avatar">
-      <span class="user-name">{{ getUserName() }}</span>
     </div>
 
     <mat-nav-list>
@@ -66,11 +70,6 @@
       <!-- Show Login Button in Sidebar if NOT Logged In -->
       <a mat-list-item routerLink="/login" routerLinkActive="active-link" *ngIf="!authService.isLoggedIn()" (click)="toggleSidebar()">
         <mat-icon>login</mat-icon> Login
-      </a>
-
-      <!-- Show Logout Button in Sidebar if Logged In -->
-      <a mat-list-item *ngIf="authService.isLoggedIn()" (click)="logout(); toggleSidebar()">
-        <mat-icon>logout</mat-icon> Logout
       </a>
     </mat-nav-list>
   </mat-sidenav>
