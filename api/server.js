@@ -5,9 +5,6 @@ const mongoose = require('mongoose');
 const cors = require('cors'); 
 const path = require('path'); // Add path module
 
-// Serve static files from the 'uploads' directory
-app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads'))); // Change to lowercase uploads
-
 // MongoDB connection
 mongoose.Promise = global.Promise;
 const uri = 'mongodb+srv://nourbazzal4:Nour4@cluster0.ngjwe.mongodb.net/assignmentsDB?retryWrites=true&w=majority&appName=Cluster0';
@@ -31,6 +28,9 @@ app.use(cors());
 // Body parsing middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 // Routes
 const assignmentsRouter = require('./routes/assignments');
