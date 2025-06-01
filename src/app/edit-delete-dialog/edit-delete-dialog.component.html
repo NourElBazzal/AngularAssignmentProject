@@ -1,0 +1,31 @@
+<div class="dialog-container">
+  <h2 mat-dialog-title>
+    <mat-icon class="dialog-icon">{{ action === 'edit' ? 'edit' : 'delete' }}</mat-icon>
+    {{ action === 'edit' ? 'Edit Member' : 'Confirm Deletion' }}
+  </h2>
+  <mat-dialog-content>
+    <ng-container *ngIf="action === 'edit'; else deleteContent">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Name</mat-label>
+        <input matInput [(ngModel)]="updatedData.name" required>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Password</mat-label>
+        <input matInput [(ngModel)]="updatedData.password" required>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Image URL</mat-label>
+        <input matInput [(ngModel)]="updatedData.image">
+      </mat-form-field>
+    </ng-container>
+    <ng-template #deleteContent>
+      <p>Are you sure you want to delete {{ member[nameField] }}?</p>
+    </ng-template>
+  </mat-dialog-content>
+  <mat-dialog-actions class="dialog-actions">
+    <button mat-raised-button (click)="onCancel()">Cancel</button>
+    <button mat-raised-button color="{{ action === 'edit' ? 'primary' : 'warn' }}" (click)="onConfirm()">
+      {{ action === 'edit' ? 'Save' : 'Delete' }}
+    </button>
+  </mat-dialog-actions>
+</div>

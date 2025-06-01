@@ -9,6 +9,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog'; // Add MatDialog
+import { EditDeleteDialogComponent } from '../edit-delete-dialog/edit-delete-dialog.component'; // Import dialog component
 
 @Component({
   selector: 'app-professors-list',
@@ -22,7 +24,8 @@ import { MatButtonModule } from '@angular/material/button';
     MatPaginatorModule,
     MatCardModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    MatDialogModule // Add MatDialogModule
   ],
   templateUrl: './professors-list.component.html',
   styleUrls: ['./professors-list.component.css']
@@ -33,7 +36,7 @@ export class ProfessorsListComponent implements OnInit {
   showPasswords: { [id: number]: boolean } = {};
   displayedColumns = ['image', 'name', 'email', 'password', 'actions'];
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.fetchProfessors();
@@ -56,30 +59,39 @@ export class ProfessorsListComponent implements OnInit {
   }
 
   editProfessor(professor: any): void {
-    const newName = prompt('Edit full name:', professor.name);
-    if (!newName) return;
+    const dialogRef = this.dialog.open(EditDeleteDialogComponent, {
+      data: { action: 'edit', member: professor, nameField: 'name' },
+      width: '400px'
+    });
 
-    const newPassword = prompt('Edit password:', professor.password);
-    if (!newPassword) return;
-
-    const newImage = prompt('Edit image URL:', professor.image || '');
-    if (newImage === null) return;
-
-    const updated = {
-      ...professor,
-      name: newName,
-      password: newPassword,
-      image: newImage
-    };
-
-    this.http.put(`http://localhost:8010/api/professors/${professor.id}`, updated)
-      .subscribe(() => this.fetchProfessors());
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        const updated = {
+          ...professor,
+          name: result.name,
+          password: result.password,
+          image: result.image
+        };
+        this.http.put(`http://localhost:8010/api/professors/${professor.id}`, updated)
+          .subscribe(() => this.fetchProfessors());
+      }
+    });
   }
 
   deleteProfessor(id: number): void {
-    if (confirm('Are you sure you want to delete this professor?')) {
-      this.http.delete(`http://localhost:8010/api/professors/${id}`)
-        .subscribe(() => this.fetchProfessors());
-    }
+    const professor = this.professors.find(p => p.id === id);
+    if (!professor) return;
+
+    const dialogRef = this.dialog.open(EditDeleteDialogComponent, {
+      data: { action: 'delete', member: professor, nameField: 'name' },
+      width: '400px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.http.delete(`http://localhost:8010/api/professors/${id}`)
+          .subscribe(() => this.fetchProfessors());
+      }
+    });
   }
 }
