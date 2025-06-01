@@ -122,15 +122,6 @@ git clone https://github.com/NourElBazzal/AngularAssignmentProject.git
 cd assignment-app
 
 
-## 🛠️ **How to Run the Project**
-
-### **1️⃣ Clone the Repository:**
-
-```bash
-git clone https://github.com/NourElBazzal/AngularAssignmentProject.git
-cd assignment-app
-````
-
 ### **2️⃣ Install Dependencies:**
 
 ```bash
@@ -166,3 +157,4 @@ ng serve
 - Ensure the uploads/ directory exists in the api/ folder for file uploads to work.
 
 ---
+````
