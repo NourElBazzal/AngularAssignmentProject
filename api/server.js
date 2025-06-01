@@ -4,6 +4,8 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors'); 
 const path = require('path');
+const port = process.env.PORT || 8010;
+
 
 mongoose.Promise = global.Promise;
 const uri = 'mongodb+srv://nourbazzal4:Nour4@cluster0.ngjwe.mongodb.net/assignmentsDB?retryWrites=true&w=majority&appName=Cluster0';
@@ -42,7 +44,6 @@ app.use(prefix + '/login', loginRouter);
 app.use(prefix + '/users', usersRouter);
 app.use(prefix + '/courses', coursesRouter); 
 
-const port = process.env.PORT || 8010;
 app.listen(port, '0.0.0.0', () => {
   console.log(`Server started at http://localhost:${port}`);
 });

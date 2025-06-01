@@ -17,7 +17,7 @@ export interface Course {
 })
 export class CoursesService {
   //private apiUrl = 'http://localhost:8010/api/students';
-  private apiUrl = `${environment.apiUrl}/students`; // 
+  private apiUrl = `${environment.apiUrl}/api/students`; // 
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 

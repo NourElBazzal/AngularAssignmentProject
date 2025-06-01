@@ -11,6 +11,7 @@ import { environment } from '../../environments/environment';
 export class AuthService {
   //private apiUrl = 'http://localhost:8010/api';
   //private backendBaseUrl = 'http://localhost:8010'; // Base URL for backend assets
+  
 
   private apiUrl = `${environment.apiUrl}/api`;
   private backendBaseUrl = environment.apiUrl;
