@@ -18,8 +18,8 @@ import { AssignmentsService } from '../shared/assignments.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
-
-
+import { AuthService } from '../shared/auth.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-assignments',
@@ -53,7 +53,9 @@ export class AssignmentsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private assignmentsService: AssignmentsService
+    private assignmentsService: AssignmentsService,
+    public authService: AuthService,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
@@ -64,13 +66,42 @@ export class AssignmentsComponent implements OnInit {
   }
 
   getAssignments(): void {
-    this.assignmentsService.getAssignments().subscribe({
-      next: (data) => {
-        this.assignments = [...data];
-        this.applyFilters();
-      },
-      error: (err) => console.error('Error fetching assignments:', err)
-    });
+    const userId = this.authService.getUserId();
+    const role = this.authService.getRole();
+
+    if (role === 'admin') {
+      this.assignmentsService.getAssignments().subscribe({
+        next: (data) => {
+          this.assignments = [...data];
+          this.applyFilters();
+        },
+        error: (err) => console.error('Error fetching all assignments:', err)
+      });
+    } else if (role === 'professor') {
+      this.http.get<any[]>(`http://localhost:8010/api/professors/${userId}/courses`).subscribe({
+        next: (data) => {
+          const allAssignments = data.flatMap(course => course.assignments || []);
+          this.assignments = allAssignments.map(item => ({
+            ...item,
+            dueDate: new Date(item.dueDate) // Ensure dueDate is a Date object
+          }));
+          this.applyFilters();
+        },
+        error: (err) => console.error('Error fetching professor courses:', err)
+      });
+    } else if (role === 'student') {
+      this.http.get<any[]>(`http://localhost:8010/api/students/${userId}/courses`).subscribe({ // Changed from /assignments to /courses
+        next: (data) => {
+          const allAssignments = data.flatMap(course => course.assignments || []);
+          this.assignments = allAssignments.map(item => ({
+            ...item,
+            dueDate: new Date(item.dueDate) // Ensure dueDate is a Date object
+          }));
+          this.applyFilters();
+        },
+        error: (err) => console.error('Error fetching student courses:', err)
+      });
+    }
   }
 
   applyFilters() {
@@ -95,15 +126,15 @@ export class AssignmentsComponent implements OnInit {
     });
 
     this.filteredAssignments = filtered;
-     this.currentPage = 1;
+    this.currentPage = 1;
     this.updatePaginatedAssignments();
   }
 
   updatePaginatedAssignments() {
-  const start = this.startItemIndex;
-  const end = this.endItemIndex;
-  this.paginatedAssignments = this.filteredAssignments.slice(start, end);
-}
+    const start = this.startItemIndex;
+    const end = this.endItemIndex;
+    this.paginatedAssignments = this.filteredAssignments.slice(start, end);
+  }
 
   onPaginationChange() {
     this.currentPage = 1;
@@ -187,15 +218,15 @@ export class AssignmentsComponent implements OnInit {
   }
 
   get totalPages(): number {
-  return Math.ceil(this.filteredAssignments.length / this.itemsPerPage);
-}
+    return Math.ceil(this.filteredAssignments.length / this.itemsPerPage);
+  }
 
-get startItemIndex(): number {
-  return (this.currentPage - 1) * this.itemsPerPage;
-}
+  get startItemIndex(): number {
+    return (this.currentPage - 1) * this.itemsPerPage;
+  }
 
-get endItemIndex(): number {
-  const end = this.startItemIndex + this.itemsPerPage;
-  return end > this.filteredAssignments.length ? this.filteredAssignments.length : end;
-}
+  get endItemIndex(): number {
+    const end = this.startItemIndex + this.itemsPerPage;
+    return end > this.filteredAssignments.length ? this.filteredAssignments.length : end;
+  }
 }

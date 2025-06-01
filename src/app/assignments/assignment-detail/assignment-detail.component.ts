@@ -158,7 +158,7 @@ export class AssignmentDetailComponent implements OnInit {
         this.assignmentsService.updateAssignment(this.assignment).subscribe({
           next: (message) => {
             console.log(message);
-            this.loadAssignment(); // Refresh data from API
+            this.loadAssignment();
           },
           error: (err) => console.error('Error updating grade:', err)
         });

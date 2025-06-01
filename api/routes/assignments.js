@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const Assignment = require('../model/assignment');
+const Course = require('../model/course');
 const multer = require('multer');
 const path = require('path');
 
 // Configure multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'Uploads/'); // Change to lowercase uploads
+    cb(null, 'Uploads/');
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + path.extname(file.originalname));
@@ -18,6 +19,37 @@ const upload = multer({ storage });
 // Récupérer tous les assignments (GET)
 router.get('/', (req, res) => {
   Assignment.find((err, assignments) => {
+    if (err) {
+      res.status(500).send(err);
+    } else {
+      res.send(assignments);
+    }
+  });
+});
+
+// Récupérer les assignments d'un professeur spécifique
+router.get('/professors/:professorId/assignments', (req, res) => {
+  const professorId = req.params.professorId;
+  Course.find({ professorId: professorId }, (err, courses) => {
+    if (err) {
+      res.status(500).send(err);
+    } else {
+      const courseIds = courses.map(course => course._id.toString());
+      Assignment.find({ courseId: { $in: courseIds } }, (err, assignments) => {
+        if (err) {
+          res.status(500).send(err);
+        } else {
+          res.send(assignments);
+        }
+      });
+    }
+  });
+});
+
+// Récupérer les assignments d'un étudiant spécifique
+router.get('/students/:studentId/assignments', (req, res) => {
+  const studentId = req.params.studentId;
+  Assignment.find({}, (err, assignments) => { // Revert to original placeholder
     if (err) {
       res.status(500).send(err);
     } else {
@@ -42,12 +74,11 @@ router.get('/:id', (req, res) => {
 
 // Ajout d'un assignment (POST)
 router.post('/', (req, res) => {
-  // Create assignment without _id to let MongoDB generate it
   const assignmentData = {
     id: req.body.id,
     name: req.body.name,
     dueDate: req.body.dueDate,
-    courseId: req.body.courseId, // Add courseId
+    courseId: req.body.courseId,
     submitted: req.body.submitted || false,
     fileUrl: req.body.fileUrl,
     grade: req.body.grade,
@@ -58,13 +89,11 @@ router.post('/', (req, res) => {
   console.log("Request body:", req.body);
   console.log("Assignment data:", assignmentData);
 
-  // Validate required fields
   if (!assignmentData.id || !assignmentData.name || !assignmentData.dueDate) {
     console.log('Validation error: Missing required fields');
     return res.status(400).send('Missing required fields: id, name, dueDate');
   }
 
-  // Check for duplicate ID
   Assignment.findOne({ id: assignmentData.id }, (err, existing) => {
     if (err) {
       console.error('Error checking ID:', err);
@@ -94,7 +123,6 @@ router.put('/:id', (req, res) => {
   console.log('Body:', req.body);
   const assignmentId = Number(req.params.id);
 
-  // Validate required fields
   if (req.body.name == null || req.body.dueDate == null) {
     console.log('Validation error: Name and dueDate cannot be null');
     return res.status(400).send('Name and dueDate cannot be null');
@@ -103,7 +131,7 @@ router.put('/:id', (req, res) => {
   const updateData = {};
   if (req.body.name !== undefined) updateData.name = req.body.name;
   if (req.body.dueDate !== undefined) updateData.dueDate = req.body.dueDate;
-  if (req.body.courseId !== undefined) updateData.courseId = req.body.courseId; // Add courseId
+  if (req.body.courseId !== undefined) updateData.courseId = req.body.courseId;
   if (req.body.submitted !== undefined) updateData.submitted = req.body.submitted;
   if (req.body.fileUrl !== undefined) updateData.fileUrl = req.body.fileUrl;
   if (req.body.grade !== undefined) updateData.grade = req.body.grade;
@@ -145,7 +173,7 @@ router.delete('/:id', (req, res) => {
 // Submit assignment with file
 router.put('/:id/submit', upload.single('file'), (req, res) => {
   const assignmentId = Number(req.params.id);
-  const submitted = req.body.submitted === 'true'; // Convert string to boolean
+  const submitted = req.body.submitted === 'true';
 
   console.log('Submit assignment reçu :');
   console.log('Params ID:', assignmentId);
@@ -157,7 +185,7 @@ router.put('/:id/submit', upload.single('file'), (req, res) => {
     return res.status(400).send('No file uploaded');
   }
 
-  const fileUrl = `/uploads/${req.file.filename}`; // Change to lowercase uploads
+  const fileUrl = `/uploads/${req.file.filename}`;
 
   Assignment.findOneAndUpdate(
     { id: assignmentId },
