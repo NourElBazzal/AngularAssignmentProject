@@ -39,18 +39,34 @@
       <a mat-list-item routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }" (click)="toggleSidebar()">
         <mat-icon>home</mat-icon> Home
       </a>
-      @if (authService.isAdmin()) {
+      @if (authService.isAdmin() || authService.isProfessor()) {
         <a mat-list-item routerLink="add" routerLinkActive="active-link" (click)="toggleSidebar()">
           <mat-icon>assignment</mat-icon> Add an Assignment
         </a>
       }
 
-      @if (authService.isStudent()) {
-        <a mat-list-item routerLink="/courses" routerLinkActive="active-link" (click)="toggleSidebar()">
-          <mat-icon>school</mat-icon> Courses
+      @if (authService.isAdmin()) {
+        <a mat-list-item routerLink="/students" routerLinkActive="active-link" (click)="toggleSidebar()">
+          <mat-icon>people</mat-icon> List of Students
+        </a>
+      }
+      @if (authService.isAdmin()) {
+        <a mat-list-item routerLink="/professors" routerLinkActive="active-link" (click)="toggleSidebar()">
+          <mat-icon>person</mat-icon> List of Professors
+        </a>
+      }
+      <!--@if (authService.isProfessor()) {
+        <a mat-list-item routerLink="/assignments" routerLinkActive="active-link" (click)="toggleSidebar()">
+          <mat-icon>assignment_ind</mat-icon> My Assignments
         </a>
       }
 
+      @if (authService.isStudent() || authService.isAdmin()) {
+        <a mat-list-item routerLink="/courses" routerLinkActive="active-link" (click)="toggleSidebar()">
+          <mat-icon>school</mat-icon> My Courses
+        </a>
+      }-->
+      
       <!-- Show Login Button in Sidebar if NOT Logged In -->
       <a mat-list-item routerLink="/login" routerLinkActive="active-link" *ngIf="!authService.isLoggedIn()" (click)="toggleSidebar()">
         <mat-icon>login</mat-icon> Login
