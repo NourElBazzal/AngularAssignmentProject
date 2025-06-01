@@ -1,8 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const Professor = require('../model/professor');
+const multer = require('multer');
+const path = require('path');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
-// Example: Get all professors
+// Multer config for profile image upload
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, 'uploads/'),
+  filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
+});
+const upload = multer({ storage });
+
+// GET all professors
 router.get('/', async (req, res) => {
   try {
     const professors = await Professor.find();
@@ -12,7 +23,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Example: Get a specific professor by ID
+// GET a specific professor by ID
 router.get('/:id', async (req, res) => {
   try {
     const professor = await Professor.findOne({ id: req.params.id });
@@ -23,22 +34,40 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Example: Update professor
-router.put('/:id', async (req, res) => {
+// ✅ PUT: Update professor with password + image
+router.put('/:id', upload.single('image'), async (req, res) => {
   try {
-    const updatedProfessor = await Professor.findOneAndUpdate(
+    const { name, password } = req.body;
+    const updateData = {};
+
+    if (name) updateData.name = name;
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+      updateData.password = hashedPassword;
+    }
+    if (req.file) {
+      updateData.image = `/uploads/${req.file.filename}`;
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).json({ message: 'No data provided for update' });
+    }
+
+    const updated = await Professor.findOneAndUpdate(
       { id: req.params.id },
-      { $set: req.body },
+      { $set: updateData },
       { new: true }
     );
-    if (!updatedProfessor) return res.status(404).json({ message: 'Professor not found' });
-    res.json({ message: 'Professor updated', professor: updatedProfessor });
+
+    if (!updated) return res.status(404).json({ message: 'Professor not found' });
+
+    res.json({ message: 'Professor updated', professor: updated });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 
-// Example: Delete professor
+// DELETE professor
 router.delete('/:id', async (req, res) => {
   try {
     const deleted = await Professor.findOneAndDelete({ id: req.params.id });

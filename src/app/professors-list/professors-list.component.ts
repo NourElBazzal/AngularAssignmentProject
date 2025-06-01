@@ -82,4 +82,11 @@ export class ProfessorsListComponent implements OnInit {
         .subscribe(() => this.fetchProfessors());
     }
   }
+
+  onImageError(professor: any, event: Event): void {
+    professor.image = '';
+    const target = event.target as HTMLImageElement;
+    target.src = 'https://ui-avatars.com/api/?name=' + professor.name;
+  }
+
 }

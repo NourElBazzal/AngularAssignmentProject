@@ -84,4 +84,11 @@ export class StudentsListComponent implements OnInit {
         .subscribe(() => this.fetchStudents());
     }
   }
+
+  onImageError(student: any, event: Event) {
+    student.image = '';
+    const target = event.target as HTMLImageElement;
+    target.src = 'https://ui-avatars.com/api/?name=' + student.fullName;
+  }
+
 }

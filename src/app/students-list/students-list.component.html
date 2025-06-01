@@ -1,5 +1,5 @@
 <div class="students-wrapper">
-  <h2>👨‍🎓 List of Students</h2>
+  <h2>👨‍🎓 Students</h2>
 
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>🔍 Search by name</mat-label>
@@ -12,13 +12,21 @@
 <div class="table-container">
   <table mat-table [dataSource]="filteredStudents" class="mat-elevation-z8">
 
-    <!-- Image Column -->
     <ng-container matColumnDef="image">
-      <th mat-header-cell *matHeaderCellDef> Image </th>
-      <td mat-cell *matCellDef="let student">
-        <img [src]="student.image || 'https://ui-avatars.com/api/?name=' + student.fullName" width="40" height="40" class="rounded-img">
-      </td>
+    <th mat-header-cell *matHeaderCellDef> Image </th>
+    <td mat-cell *matCellDef="let student">
+        <img
+        [src]="'http://localhost:8010' + student.image"
+        (error)="onImageError(student, $event)"
+        width="40"
+        height="40"
+        class="rounded-img"
+        />
+    </td>
     </ng-container>
+
+
+
 
     <!-- Full Name -->
     <ng-container matColumnDef="fullName">
