@@ -1,0 +1,28 @@
+<div class="courses-container">
+  <h2>📚 My Courses & Assignments</h2>
+
+  <mat-grid-list cols="3" rowHeight="400px" gutterSize="16">
+    <mat-grid-tile *ngFor="let course of courses" class="grid-tile">
+      <mat-card class="course-card">
+        <img [src]="course.image || 'https://via.placeholder.com/300?text=' + course.name" 
+             (error)="onImageError($event, course)"
+             class="course-image" alt="{{ course.name }}">
+        
+        <mat-card-header>
+          <mat-card-title>{{ course.name }}</mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+          <h4>Assignments:</h4>
+          <mat-list>
+            <mat-list-item *ngFor="let assignment of course.assignments" (click)="goToAssignment(assignment)">
+              <span class="assignment-link">{{ assignment.name }}</span>
+              <span class="assignment-status">(Due: {{ assignment.dueDate | date:'shortDate' }})</span>
+            </mat-list-item>
+            <mat-list-item *ngIf="!course.assignments.length">No assignments</mat-list-item>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+  </mat-grid-list>
+</div>

@@ -16,8 +16,8 @@
           <p *ngIf="!course.professors.length">No professors assigned</p>
           <h4>Assignments:</h4>
           <mat-list>
-            <mat-list-item *ngFor="let assignment of course.assignments">
-              <span>{{ assignment.name }}</span>
+            <mat-list-item *ngFor="let assignment of course.assignments" (click)="goToAssignment(assignment)">
+              <span class="assignment-link">{{ assignment.name }}</span>
               <span class="assignment-status">
                 {{ assignment.submitted ? '✅ Submitted' : '❌ Not Submitted' }}
                 (Due: {{ assignment.dueDate | date:'shortDate' }})

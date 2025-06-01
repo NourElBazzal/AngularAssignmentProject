@@ -55,11 +55,14 @@
           <mat-icon>person</mat-icon> List of Professors
         </a>
       }
-      <!--@if (authService.isProfessor()) {
-        <a mat-list-item routerLink="/assignments" routerLinkActive="active-link" (click)="toggleSidebar()">
-          <mat-icon>assignment_ind</mat-icon> My Assignments
+
+      
+      @if (authService.isProfessor()) {
+        <a mat-list-item routerLink="/professor-dashboard" routerLinkActive="active-link" (click)="toggleSidebar()">
+          <mat-icon>school</mat-icon> My Courses
         </a>
-      }-->
+      }
+
 
       @if (authService.isStudent()) {
         <a mat-list-item routerLink="/courses" routerLinkActive="active-link" (click)="toggleSidebar()">

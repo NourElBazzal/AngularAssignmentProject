@@ -51,4 +51,8 @@ export class CoursesComponent implements OnInit {
       item.image = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(item.name);
     }
   }
+  goToAssignment(assignment: any): void {
+    this.router.navigate(['/assignment', assignment.id]);
+  }
+
 }

@@ -9,6 +9,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { AuthGuard } from './shared/auth.guard';
 import { StudentsListComponent } from './students-list/students-list.component';
 import { ProfessorsListComponent } from './professors-list/professors-list.component';
+import { ProfessorDashboardComponent } from './professor-dashboard/professor-dashboard.component';
 
 export const routes: Routes = [
   { path: '', component: AssignmentsComponent }, 
@@ -24,5 +25,7 @@ export const routes: Routes = [
     path: 'courses',
     loadComponent: () => import('./courses/courses.component').then(m => m.CoursesComponent)
   },
+  { path: 'professor-dashboard', component: ProfessorDashboardComponent, canActivate: [AuthGuard], data: { role: 'professor' } },
+  
   { path: '**', redirectTo: '' }
 ];

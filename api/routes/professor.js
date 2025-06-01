@@ -5,6 +5,9 @@ const multer = require('multer');
 const path = require('path');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
+const Course = require('../model/course');
+const Assignment = require('../model/assignment');
+
 
 // Multer config for profile image upload
 const storage = multer.diskStorage({
@@ -34,7 +37,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// ✅ PUT: Update professor with password + image
+// PUT: Update professor with password + image
 router.put('/:id', upload.single('image'), async (req, res) => {
   try {
     const { name, password } = req.body;
@@ -77,5 +80,24 @@ router.delete('/:id', async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
+
+router.get('/:id/courses', async (req, res) => {
+  try {
+    const professor = await Professor.findOne({ id: req.params.id });
+    if (!professor) return res.status(404).json({ message: 'Professor not found' });
+
+    const courses = await Course.find({ _id: { $in: professor.courseIds } }).lean();
+
+    const courseDetails = await Promise.all(courses.map(async course => {
+      const assignments = await Assignment.find({ courseId: course._id });
+      return { ...course, assignments };
+    }));
+
+    res.json(courseDetails);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 module.exports = router;
