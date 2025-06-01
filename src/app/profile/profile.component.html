@@ -20,7 +20,9 @@
       </mat-icon>
     </mat-form-field>
     <mat-error *ngIf="errorMessage">{{ errorMessage }}</mat-error>
-    <button mat-raised-button color="primary" (click)="onSave()" [disabled]="!userName">Save</button>
-    <button mat-raised-button (click)="goBack()">Cancel</button>
+    <div class="button-container">
+      <button mat-raised-button color="primary" (click)="onSave()" [disabled]="!userName">Save</button>
+      <button mat-raised-button (click)="goBack()">Cancel</button>
+    </div>
   </mat-card-content>
 </mat-card>
