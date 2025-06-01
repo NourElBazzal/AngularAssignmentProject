@@ -117,10 +117,10 @@ The Assignment Management System is a web application built with **Angular**, in
 
 ### 1️⃣ Clone the Repository
 
-````bash
+```bash
 git clone https://github.com/NourElBazzal/AngularAssignmentProject.git
 cd assignment-app
-
+```
 
 ### **2️⃣ Install Dependencies:**
 
@@ -157,4 +157,3 @@ ng serve
 - Ensure the uploads/ directory exists in the api/ folder for file uploads to work.
 
 ---
-````
