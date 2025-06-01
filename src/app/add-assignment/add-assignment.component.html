@@ -4,7 +4,16 @@
     <mat-form-field>
       <input matInput [(ngModel)]="assignmentName" name="name" placeholder="Assignment Name" required>
     </mat-form-field>
-    
+
+    <mat-form-field>
+      <mat-label>Select Course</mat-label>
+      <mat-select [(ngModel)]="selectedCourseId" name="courseId" required>
+        <mat-option *ngFor="let course of courses" [value]="course._id">
+          {{ course.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
     <mat-form-field appearance="fill">
       <input matInput [matDatepicker]="picker" placeholder="Due Date" [(ngModel)]="dueDate" name="date" required>
       <mat-label>Choose a date</mat-label>
@@ -12,6 +21,6 @@
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
 
-    <button mat-raised-button color="accent" [disabled]="!assignmentName || !dueDate">➕ Add Assignment</button>
+    <button mat-raised-button color="accent" [disabled]="!assignmentName || !dueDate || !selectedCourseId">➕ Add Assignment</button>
   </form>
 </div>

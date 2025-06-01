@@ -41,7 +41,6 @@ export class AssignmentDetailComponent implements OnInit {
   ) {}
 
   getFileUrl(fileUrl: string): string {
-    // Normalize to lowercase uploads
     if (fileUrl.startsWith('/Uploads')) {
       fileUrl = fileUrl.replace('/Uploads', '/uploads');
     }

@@ -32,13 +32,15 @@ const studentRouter = require('./routes/student');
 const professorRouter = require('./routes/professor');
 const loginRouter = require('./routes/login');
 const usersRouter = require('./routes/users'); 
+const coursesRouter = require('./routes/courses'); 
 
 const prefix = '/api';
 app.use(prefix + '/assignments', assignmentsRouter);
 app.use(prefix + '/students', studentRouter);
 app.use(prefix + '/professors', professorRouter);
 app.use(prefix + '/login', loginRouter);
-app.use(prefix + '/users', usersRouter); 
+app.use(prefix + '/users', usersRouter);
+app.use(prefix + '/courses', coursesRouter); 
 
 const port = process.env.PORT || 8010;
 app.listen(port, '0.0.0.0', () => {
