@@ -9,6 +9,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog'; // Add MatDialog
+import { EditDeleteDialogComponent } from '../edit-delete-dialog/edit-delete-dialog.component'; // Import dialog component
 
 @Component({
   selector: 'app-students-list',
@@ -22,7 +24,8 @@ import { MatButtonModule } from '@angular/material/button';
     MatPaginatorModule,
     MatCardModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    MatDialogModule // Add MatDialogModule
   ],
   templateUrl: './students-list.component.html',
   styleUrls: ['./students-list.component.css']
@@ -30,11 +33,11 @@ import { MatButtonModule } from '@angular/material/button';
 export class StudentsListComponent implements OnInit {
   students: any[] = [];
   searchText: string = '';
-  showPasswords: { [id: number]: boolean } = {}; // tracks password toggle state
+  showPasswords: { [id: number]: boolean } = {};
 
   displayedColumns = ['image', 'fullName', 'email', 'password', 'actions'];
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.fetchStudents();
@@ -57,32 +60,40 @@ export class StudentsListComponent implements OnInit {
   }
 
   editStudent(student: any): void {
-    const newName = prompt('Edit full name:', student.fullName);
-    if (!newName) return;
+    const dialogRef = this.dialog.open(EditDeleteDialogComponent, {
+      data: { action: 'edit', member: student, nameField: 'fullName' },
+      width: '400px'
+    });
 
-    const newPassword = prompt('Edit password:', student.password);
-    if (!newPassword) return;
-
-    const newImage = prompt('Edit image URL:', student.image || '');
-    if (newImage === null) return;
-
-    const updatedStudent = {
-      ...student,
-      fullName: newName,
-      password: newPassword,
-      image: newImage
-    };
-
-    this.http.put(`http://localhost:8010/api/students/${student.id}`, updatedStudent)
-      .subscribe(() => this.fetchStudents());
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        const updatedStudent = {
+          ...student,
+          fullName: result.name,
+          password: result.password,
+          image: result.image
+        };
+        this.http.put(`http://localhost:8010/api/students/${student.id}`, updatedStudent)
+          .subscribe(() => this.fetchStudents());
+      }
+    });
   }
 
-
   deleteStudent(id: number): void {
-    if (confirm('Are you sure you want to delete this student?')) {
-      this.http.delete(`http://localhost:8010/api/students/${id}`)
-        .subscribe(() => this.fetchStudents());
-    }
+    const student = this.students.find(s => s.id === id);
+    if (!student) return;
+
+    const dialogRef = this.dialog.open(EditDeleteDialogComponent, {
+      data: { action: 'delete', member: student, nameField: 'fullName' },
+      width: '400px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.http.delete(`http://localhost:8010/api/students/${id}`)
+          .subscribe(() => this.fetchStudents());
+      }
+    });
   }
 
   onImageError(student: any, event: Event) {
