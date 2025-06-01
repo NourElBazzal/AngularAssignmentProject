@@ -36,8 +36,8 @@ export class AuthService {
 
   updateProfile(userId: string, name: string, password: string, image?: File | null): Observable<any> {
     const formData = new FormData();
-    formData.append('name', name);
-    formData.append('password', password || '');
+    if (name.trim()) formData.append('name', name); // Only append if not empty
+    if (password.trim()) formData.append('password', password); // Only append if not empty
     if (image) formData.append('image', image); // Only append if image exists
     formData.append('role', this.getRole() || '');
 

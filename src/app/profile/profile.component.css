@@ -2,6 +2,7 @@
   text-align: center;
   margin-bottom: 20px;
   position: relative;
+  display: inline-block; /* Ensure container fits the avatar */
 }
 .avatar {
   width: 150px;
@@ -10,13 +11,25 @@
   object-fit: cover;
   border: 4px solid #fff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1; /* Ensure avatar is below the icon */
 }
-.profile-image input[type="file"] {
-  margin-top: 10px;
-  padding: 5px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+.file-input {
+  display: none;
+}
+.camera-icon {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border-radius: 50%;
+  padding: 8px; /* Increased padding for better visibility */
   cursor: pointer;
+  z-index: 2; /* Ensure icon is above the avatar */
+}
+.camera-icon:hover {
+  background: rgba(0, 0, 0, 0.8);
 }
 mat-form-field {
   width: 100%;
@@ -44,6 +57,13 @@ button {
   margin-right: 10px;
   margin-top: 10px;
 }
+.password-toggle {
+  cursor: pointer;
+  color: #666;
+}
+.password-toggle:hover {
+  color: #3f51b5;
+}
 @media (max-width: 600px) {
   mat-card {
     margin: 10px;
@@ -55,5 +75,10 @@ button {
   }
   mat-card-title {
     font-size: 20px;
+  }
+  .camera-icon {
+    bottom: 5px;
+    right: 5px;
+    padding: 5px; 
   }
 }

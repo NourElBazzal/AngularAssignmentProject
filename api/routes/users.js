@@ -34,16 +34,19 @@ router.put('/:id', upload.single('image'), async (req, res) => {
     }
 
     const updateData = {};
-    if (name) updateData[nameField(role)] = name; // Use role-specific field
+    console.log('Received data:', { name, password, file: req.file ? req.file.filename : null }); // Debug log
+    if (name) updateData[nameField(role)] = name; // Only update if name is provided
     if (password) {
       const hashedPassword = await bcrypt.hash(password, saltRounds);
       updateData.password = hashedPassword;
     }
     if (req.file) {
-      console.log('File received:', req.file); // Debug log
+      console.log('File received:', req.file.filename); // Debug log
       updateData.image = `/uploads/${req.file.filename}`;
-    } else {
-      console.log('No file received'); // Debug log
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).json({ message: 'No updates provided' });
     }
 
     updatedUser = await userModel.findOneAndUpdate(
