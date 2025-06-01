@@ -7,7 +7,7 @@ const studentSchema = new mongoose.Schema({
   password: { type: String, required: true },
   image: { type: String },
   coursesTaken: [{ type: String }], // array of course names or IDs
-  assignments: [{ type: Number }]   // assignment IDs or objects, adjust as needed
+  assignments: [{ type: String }]   // assignment IDs or objects, adjust as needed
 }, { _id: true });
 
 module.exports = mongoose.model('Student', studentSchema);
