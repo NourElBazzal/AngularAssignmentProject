@@ -5,6 +5,10 @@ const mongoose = require('mongoose');
 const cors = require('cors'); 
 const path = require('path');
 require('dotenv').config();
+const port = process.env.PORT || 8010;
+app.listen(port, () => {
+  console.log(`Serveur lancé sur http://localhost:${port}`);
+});
 
 mongoose.Promise = global.Promise;
 
