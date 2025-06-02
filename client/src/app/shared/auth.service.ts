@@ -13,8 +13,8 @@ export class AuthService {
   //private backendBaseUrl = 'http://localhost:8010'; // Base URL for backend assets
   
 
-  private apiUrl = `${environment.apiUrl}/api`;
-  private backendBaseUrl = environment.apiUrl;
+  private apiUrl = `https://angularbackend-1493.onrender.com/api`;
+  private backendBaseUrl = 'https://angularbackend-1493.onrender.com';
 
   constructor(private http: HttpClient, private router: Router) {}
 
