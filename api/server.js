@@ -4,14 +4,17 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors'); 
 const path = require('path');
+require('dotenv').config();
 const port = process.env.PORT || 8010;
 
-app.listen(port, '0.0.0.0', () => {
+app.listen(port, () => {
   console.log(`Server started at http://localhost:${port}`);
 });
 
 mongoose.Promise = global.Promise;
-const uri = 'mongodb+srv://nourbazzal4:Nour4@cluster0.ngjwe.mongodb.net/assignmentsDB?retryWrites=true&w=majority&appName=Cluster0';
+
+const urii = 'mongodb+srv://nourbazzal4:Nour4@cluster0.ngjwe.mongodb.net/assignmentsDB?retryWrites=true&w=majority&appName=Cluster0';
+const uri = process.env.MONGODB_URI || uri; 
 const options = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
