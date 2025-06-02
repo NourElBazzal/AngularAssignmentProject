@@ -78,7 +78,7 @@ export class AssignmentsComponent implements OnInit {
         error: (err) => console.error('Error fetching all assignments:', err)
       });
     } else if (role === 'professor') {
-      this.http.get<any[]>(`http://localhost:8010/api/professors/${userId}/courses`).subscribe({
+      this.http.get<any[]>(`https://angularbackend-1493.onrender.com/api/professors/${userId}/courses`).subscribe({
         next: (data) => {
           const allAssignments = data.flatMap(course => course.assignments || []);
           this.assignments = allAssignments.map(item => ({
@@ -90,7 +90,7 @@ export class AssignmentsComponent implements OnInit {
         error: (err) => console.error('Error fetching professor courses:', err)
       });
     } else if (role === 'student') {
-      this.http.get<any[]>(`http://localhost:8010/api/students/${userId}/courses`).subscribe({ // Changed from /assignments to /courses
+      this.http.get<any[]>(`https://angularbackend-1493.onrender.com/api/students/${userId}/courses`).subscribe({ // Changed from /assignments to /courses
         next: (data) => {
           const allAssignments = data.flatMap(course => course.assignments || []);
           this.assignments = allAssignments.map(item => ({

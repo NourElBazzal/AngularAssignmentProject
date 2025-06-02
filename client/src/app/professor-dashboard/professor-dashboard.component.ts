@@ -22,7 +22,7 @@ export class ProfessorDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     const professorId = this.authService.getUserId();
-    this.http.get<any[]>(`http://localhost:8010/api/professors/${professorId}/courses`)
+    this.http.get<any[]>(`https://angularbackend-1493.onrender.com/api/professors/${professorId}/courses`)
       .subscribe({
         next: (data) => this.courses = data,
         error: (err) => console.error('Error loading professor courses:', err)

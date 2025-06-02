@@ -46,7 +46,7 @@ export class AddAssignmentComponent implements OnInit {
   }
 
   fetchCourses() {
-    this.http.get<any[]>('http://localhost:8010/api/courses').subscribe({
+    this.http.get<any[]>('https://angularbackend-1493.onrender.com/api/courses').subscribe({
       next: (courses) => {
         this.courses = courses;
         if (courses.length > 0) {

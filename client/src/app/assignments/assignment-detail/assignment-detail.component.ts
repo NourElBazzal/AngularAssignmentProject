@@ -30,7 +30,7 @@ import { MatInputModule } from '@angular/material/input';
 export class AssignmentDetailComponent implements OnInit {
   assignment?: Assignment;
   selectedFile: File | null = null;
-  baseUrl = 'http://localhost:8010';
+  baseUrl = 'https://angularbackend-1493.onrender.com';
 
   constructor(
     private route: ActivatedRoute,

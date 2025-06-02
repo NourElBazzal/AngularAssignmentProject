@@ -43,7 +43,8 @@ export class ProfessorsListComponent implements OnInit {
   }
 
   fetchProfessors(): void {
-    this.http.get<any[]>('http://localhost:8010/api/professors').subscribe(data => {
+    //this.http.get<any[]>('http://localhost:8010/api/professors').subscribe(data => {
+    this.http.get<any[]>('https://angularbackend-1493.onrender.com/api/professors').subscribe(data => {
       this.professors = data;
     });
   }
@@ -72,7 +73,7 @@ export class ProfessorsListComponent implements OnInit {
           password: result.password,
           image: result.image
         };
-        this.http.put(`http://localhost:8010/api/professors/${professor.id}`, updated)
+        this.http.put(`https://angularbackend-1493.onrender.com/api/professors/${professor.id}`, updated)
           .subscribe(() => this.fetchProfessors());
       }
     });
@@ -89,7 +90,7 @@ export class ProfessorsListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.http.delete(`http://localhost:8010/api/professors/${id}`)
+        this.http.delete(`https://angularbackend-1493.onrender.com/api/professors/${id}`)
           .subscribe(() => this.fetchProfessors());
       }
     });
