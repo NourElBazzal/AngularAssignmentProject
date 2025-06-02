@@ -6,6 +6,7 @@
     "start": "ng serve",
     "build": "npx ng build --configuration production",
     "watch": "ng build --watch --configuration development",
+    "prepare": "chmod +x ./node_modules/.bin/ng",
     "test": "ng test"
   },
   "private": true,
