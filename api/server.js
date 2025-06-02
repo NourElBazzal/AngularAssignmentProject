@@ -6,9 +6,6 @@ const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
 const port = process.env.PORT || 8010;
-app.listen(port, () => {
-  console.log(`Serveur lancé sur http://localhost:${port}`);
-});
 
 mongoose.Promise = global.Promise;
 
@@ -48,5 +45,9 @@ app.use(prefix + '/professors', professorRouter);
 app.use(prefix + '/login', loginRouter);
 app.use(prefix + '/users', usersRouter);
 app.use(prefix + '/courses', coursesRouter); 
+
+app.listen(port,"0.0.0.0", () => {
+  console.log(`Serveur lancé sur http://localhost:${port}`);
+});
 
 module.exports = app;
