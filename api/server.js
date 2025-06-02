@@ -46,8 +46,9 @@ app.use(prefix + '/login', loginRouter);
 app.use(prefix + '/users', usersRouter);
 app.use(prefix + '/courses', coursesRouter); 
 
-app.listen(port,"0.0.0.0", () => {
-  console.log(`Serveur lancé sur http://localhost:${port}`);
+app.listen(port, () => {
+  console.log(`Server started on port ${port}`);
 });
+
 
 module.exports = app;
