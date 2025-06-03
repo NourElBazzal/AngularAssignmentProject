@@ -44,7 +44,7 @@ export class StudentsListComponent implements OnInit {
   }
 
   fetchStudents(): void {
-    this.http.get<any[]>('http://localhost:8010/api/students').subscribe(data => {
+    this.http.get<any[]>('https://angularbackend-1493.onrender.com/api/students').subscribe(data => {
       this.students = data;
     });
   }
@@ -73,7 +73,7 @@ export class StudentsListComponent implements OnInit {
           password: result.password,
           image: result.image
         };
-        this.http.put(`http://localhost:8010/api/students/${student.id}`, updatedStudent)
+        this.http.put(`https://angularbackend-1493.onrender.com/api/students/${student.id}`, updatedStudent)
           .subscribe(() => this.fetchStudents());
       }
     });
@@ -90,7 +90,7 @@ export class StudentsListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.http.delete(`http://localhost:8010/api/students/${id}`)
+        this.http.delete(`https://angularbackend-1493.onrender.com/api/students/${id}`)
           .subscribe(() => this.fetchStudents());
       }
     });
